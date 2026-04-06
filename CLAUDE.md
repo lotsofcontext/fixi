@@ -18,3 +18,4 @@ Fixi is a Claude Code skill that automates the full lifecycle of issue resolutio
 - ALWAYS create a branch. NEVER commit to main.
 - ALWAYS run tests before creating PR.
 - Conventional commits: fix:, feat:, refactor:, etc.
+- ALWAYS commit granularly: un commit por cada unidad lógica completada (un diagrama, un doc, una sección). No acumular cambios grandes.
