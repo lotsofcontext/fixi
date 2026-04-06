@@ -9,8 +9,11 @@ Fixi is a Claude Code skill that automates the full lifecycle of issue resolutio
 - `skill/references/guardrails.md` — 13 safety rules
 
 ## Development
-- `docs/PLAN.md` — 5-phase roadmap (36 tasks)
+- `docs/PLAN.md` — 6-phase roadmap (46 tasks, includes Azure/MCP/A2A/demo)
 - `docs/SPEC.md` — Full technical specification
+- `docs/diagrams.md` — 5 Mermaid diagrams (flow, classification, autonomy, tracking, architecture)
+- `docs/CLIENT-FACING.md` — Business-language doc for GlobalMVM
+- `docs/planning/BACKLOG.md` — Prioritized backlog items
 
 ## Rules
 - NEVER invent information. If data is missing, halt and ask.
