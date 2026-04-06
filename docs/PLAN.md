@@ -1,8 +1,13 @@
 # PLAN: Fix-Issue Agent — Agente Autonomo de Resolucion de Tickets
-#plan #skill #fix-issue #fase-1
+#plan #skill #fix-issue
 
 > Documento padre: [[MASTERPLAN]]
-> Skill: [[.claude/skills/fix-issue/SKILL|fix-issue]]
+> Skill: [[SKILL|fix-issue workflow]]
+> Spec: [[SPEC|Especificación técnica]]
+> Diagramas: [[diagrams|Diagramas Mermaid]]
+> Backlog: [[BACKLOG|Items pendientes]]
+> Guardrails: [[guardrails|Reglas de seguridad]]
+> Clasificación: [[classification|Taxonomía de 7 tipos]]
 > Fecha: 2026-04-06
 > Estado: EN DESARROLLO
 
@@ -52,22 +57,25 @@ Esto no es "code generation" generico. Es un agente que entiende el contexto del
 ---
 
 ### Fase 2: Multi-Source y Clasificacion Inteligente
-**Meta**: Soporte para Linear, Jira, texto libre. Clasificacion con confianza porcentual y desambiguacion.
+**Meta**: Soporte para Linear, Jira, Azure DevOps, texto libre. Clasificacion con confianza porcentual y desambiguacion.
+Ver: [[diagrams#2. Árbol de Clasificación|Diagrama de clasificación]]
 
 | # | Tarea | Descripcion | Entregable | Dependencia |
 |---|-------|-------------|------------|-------------|
 | 2.1 | Parser de Linear tickets | Implementar parsing de URLs de Linear (`linear.app/.../issue/ABC-123`) con WebFetch y fallback a input manual cuando hay auth wall | Solicitud normalizada desde Linear con misma estructura que GitHub | Fase 1 completada |
 | 2.2 | Parser de Jira tickets | Implementar parsing de URLs de Jira (`atlassian.net/browse/PROJ-123`) con WebFetch y fallback a input manual cuando hay auth wall | Solicitud normalizada desde Jira con misma estructura que GitHub | Fase 1 completada |
 | 2.3 | Parser de texto libre | Implementar intake de descripcion libre sin URL: generar external_id (`FREE-{YYYYMMDD}-{slug}`), extraer titulo y body, inferir labels y prioridad del texto | Solicitud normalizada desde texto libre | Fase 1 completada |
-| 2.4 | Deteccion automatica de formato | Implementar dispatcher que detecte automaticamente el tipo de input (GitHub URL, GitHub shorthand, Linear URL, Jira URL, texto libre) por regex matching y rutee al parser correcto | Unico punto de entrada que funciona con cualquier formato | 2.1, 2.2, 2.3 |
-| 2.5 | Clasificacion con confianza porcentual | Evolucionar la clasificacion de ALTA/MEDIA/BAJA a porcentaje numerico basado en: cantidad de keywords matcheados, presencia de stack traces, labels del issue, contexto del repo | Confianza expresada como 0-100% con umbral configurable para pedir confirmacion | 2.4 |
-| 2.6 | Desambiguacion inteligente | Implementar logica para casos ambiguos (ej: "fix auth bypass" = security no bug): prioridad por severidad, preguntas dirigidas al usuario cuando confianza < 70% | Clasificacion correcta en casos edge con interaccion minima | 2.5 |
-| 2.7 | Documento de referencia de clasificacion | Crear `references/classification.md` con taxonomia completa: keywords por tipo, ejemplos reales, casos edge documentados, reglas de prioridad entre tipos | Documento de referencia que el skill consulta para clasificar | 2.6 |
+| 2.4 | Parser de Azure DevOps Work Items | Implementar parsing de URLs de Azure DevOps (`dev.azure.com/{org}/{project}/_workitems/edit/{id}`) via `az boards work-item show` con fallback a WebFetch o input manual. Mapear fields de ADO (System.Title, System.Description, System.Tags) a estructura normalizada | Solicitud normalizada desde Azure DevOps con misma estructura que GitHub | Fase 1 completada |
+| 2.5 | Deteccion automatica de formato | Implementar dispatcher que detecte automaticamente el tipo de input (GitHub URL, GitHub shorthand, Linear URL, Jira URL, Azure DevOps URL, texto libre) por regex matching y rutee al parser correcto | Unico punto de entrada que funciona con cualquier formato | 2.1, 2.2, 2.3, 2.4 |
+| 2.6 | Clasificacion con confianza porcentual | Evolucionar la clasificacion de ALTA/MEDIA/BAJA a porcentaje numerico basado en: cantidad de keywords matcheados, presencia de stack traces, labels del issue, contexto del repo | Confianza expresada como 0-100% con umbral configurable para pedir confirmacion | 2.5 |
+| 2.7 | Desambiguacion inteligente | Implementar logica para casos ambiguos (ej: "fix auth bypass" = security no bug): prioridad por severidad, preguntas dirigidas al usuario cuando confianza < 70% | Clasificacion correcta en casos edge con interaccion minima | 2.6 |
+| 2.8 | Documento de referencia de clasificacion | Crear `references/classification.md` con taxonomia completa: keywords por tipo, ejemplos reales, casos edge documentados, reglas de prioridad entre tipos | Documento de referencia que el skill consulta para clasificar — ver [[classification]] | 2.7 |
 
 ---
 
 ### Fase 3: Autonomia y Testing
 **Meta**: Modos CONFIRM_PLAN y FULL_AUTO funcionales. Deteccion y ejecucion automatica de tests.
+Ver: [[diagrams#3. Niveles de Autonomía|Diagrama de autonomía]]
 
 | # | Tarea | Descripcion | Entregable | Dependencia |
 |---|-------|-------------|------------|-------------|
@@ -82,6 +90,7 @@ Esto no es "code generation" generico. Es un agente que entiende el contexto del
 
 ### Fase 4: Tracking Triple-Write
 **Meta**: Actualizacion obligatoria y confiable de ACTIVO.md + Mission Control (tasks.json, activity-log.json, inbox.json).
+Ver: [[diagrams#4. Flujo de Triple-Write (Tracking)|Diagrama de triple-write]]
 
 | # | Tarea | Descripcion | Entregable | Dependencia |
 |---|-------|-------------|------------|-------------|
@@ -97,6 +106,7 @@ Esto no es "code generation" generico. Es un agente que entiende el contexto del
 
 ### Fase 5: Hardening y Guardrails
 **Meta**: Seguridad robusta, rollback automatico, limites de scope, documentacion de referencia.
+Ver: [[guardrails|13 reglas de seguridad]]
 
 | # | Tarea | Descripcion | Entregable | Dependencia |
 |---|-------|-------------|------------|-------------|
@@ -111,18 +121,41 @@ Esto no es "code generation" generico. Es un agente que entiende el contexto del
 
 ---
 
+### Fase 6: Ecosistema, Infraestructura y Demo Publico
+**Meta**: Fixi deployable en Azure, expuesto via MCP, descubrible via A2A, con demo publico verificable y capacidad de auto-mejora.
+Ver: [[diagrams#5. Arquitectura de Integración|Diagrama de arquitectura]], [[BACKLOG|Items de backlog relacionados]]
+
+| # | Tarea | Descripcion | Entregable | Dependencia |
+|---|-------|-------------|------------|-------------|
+| 6.1 | Azure DevOps PR creation | Implementar creacion de PRs via `az repos pr create` como alternativa a `gh pr create`. Detectar automaticamente si el remote es Azure Repos o GitHub y usar el CLI correcto. Branch naming compatible con convenciones Azure Repos | PRs creados en Azure Repos con el mismo template y calidad que GitHub | Fase 2 (parser ADO) |
+| 6.2 | Azure Pipelines integration | Detectar `azure-pipelines.yml` como CI/CD. Verificar que pipeline corre post-push. Documentar resultado de pipeline en PR comments | Integracion con Azure Pipelines para validacion automatica post-push | 6.1 |
+| 6.3 | Terraform — Azure Container Instances | Modulos Terraform para deployar Fixi como container en Azure: ACI, Container Registry, networking, managed identity. Variables para org-specific config | `terraform/` con modulos listos para `terraform apply` | Fases 1-5 estables |
+| 6.4 | Terraform — Azure DevOps Project | Terraform para configurar Azure DevOps project: service connections, pipelines, repos, work item queries que alimenten a Fixi | Proyecto ADO configurado via IaC | 6.3 |
+| 6.5 | MCP Server — Fixi como servicio | Exponer Fixi como MCP server con tools: `parse-issue`, `classify`, `analyze`, `implement`, `create-pr`. Autenticacion via tokens. Schema JSON para cada tool | MCP server funcional que otros agentes pueden llamar | Fases 1-5 estables |
+| 6.6 | Agent Card (A2A discovery) | Publicar agent card en formato estandar: nombre, capabilities, endpoint, protocolo, autenticacion requerida. Endpoint `/.well-known/agent.json` | Fixi descubrible por otros agentes via A2A protocol | 6.5 |
+| 6.7 | Demo publico — /status endpoint | Endpoint publico GET `/status` que retorna: version, capabilities, uptime, fixes recientes (count), health. Pagina HTML con visualizacion del estado | Endpoint publico para que GlobalMVM verifique operacion | 6.3 |
+| 6.8 | Demo publico — /verify/:fix_id | Endpoint publico GET `/verify/:fix_id` que muestra: PR link, commits, archivos modificados, resultado de tests, evidencia de tracking. Todas las acciones del agente son auditables | Verificacion publica de cada fix ejecutado | 6.7 |
+| 6.9 | Self-dogfooding — auto-analisis | Configurar Fixi para analizar su propio repo: linting, test failures, code smells generan issues automaticos. Fixi ejecuta `/fix-issue` contra sus propios tickets | Fixi mejora su propio codigo de forma autonoma | Fases 1-5 estables |
+| 6.10 | Self-dogfooding — guardrails de recursion | Implementar limites para evitar loops infinitos en self-dogfooding: max fixes por dia, cooldown entre ejecuciones, no crear issues sobre issues que acaba de crear, human review gate para self-fixes | Guardrails que previenen runaway behavior | 6.9 |
+
+---
+
 ## Criterios de Exito
 
 El proyecto esta completo cuando se cumplan TODAS estas condiciones:
 
 1. **End-to-end funcional**: `/fix-issue` resuelve un GitHub Issue real de un repo de cliente, desde URL hasta PR creado, en menos de 5 minutos de tiempo humano
-2. **Multi-source**: El skill acepta tickets de GitHub, Linear, Jira, y texto libre sin configuracion adicional
+2. **Multi-source**: El skill acepta tickets de GitHub, Linear, Jira, Azure DevOps, y texto libre sin configuracion adicional
 3. **Clasificacion correcta**: En 10 tickets de prueba variados, la clasificacion automatica es correcta en al menos 8 (80% accuracy)
 4. **Triple-write consistente**: Despues de cada ejecucion, ACTIVO.md, tasks.json, activity-log.json, e inbox.json estan actualizados correctamente
 5. **Rollback confiable**: Si se fuerza un fallo en cualquier paso (3 al 8), el rollback deja el repo exactamente como estaba antes
 6. **Zero incidents de seguridad**: En 20 ejecuciones de prueba, nunca se opera en main, nunca se tocan credentials, nunca se opera en consultoria-x
 7. **3 niveles de autonomia**: GUIDED, CONFIRM_PLAN, y FULL_AUTO funcionan correctamente con transiciones mid-execution
 8. **Convenciones respetadas**: PRs y commits siguen las convenciones del cliente cuando existen, y los defaults del skill cuando no
+9. **Azure DevOps funcional**: Fixi crea PRs en Azure Repos y parsea Work Items de Azure DevOps correctamente
+10. **Deployable via IaC**: `terraform apply` deploya Fixi en Azure sin intervencion manual
+11. **MCP Server operativo**: Otro agente puede llamar a Fixi via MCP y recibir resultado estructurado
+12. **Demo publico verificable**: `/status` y `/verify/:fix_id` accesibles y mostrando data real
 
 ---
 
@@ -134,10 +167,12 @@ El proyecto esta completo cuando se cumplan TODAS estas condiciones:
 | **Causa raiz mal identificada** — el agente arregla el sintoma en vez de la causa | Media | Alto | Presentar hipotesis estructurada con evidencia antes de implementar. En GUIDED mode, Saul valida la hipotesis. Clasificar confianza del analisis |
 | **Tracking desincronizado** — alguno de los 3 destinos de tracking no se actualiza | Media | Medio | Validacion post-escritura con reintento. Reporte explicito de que se actualizo y que no. Nunca silenciar errores de tracking |
 | **Repo sin tests** — no hay forma de verificar que el fix no rompe nada | Alta | Medio | Documentar en PR que no hay tests. Generar test de regresion cuando sea posible. No bloquear el fix por falta de tests existentes |
-| **Auth de `gh` expirada o repo sin acceso** — el CLI de GitHub falla en operaciones criticas | Media | Medio | Fallback a input manual del usuario. Instrucciones claras para re-autenticar. Detectar el error antes de hacer cambios |
+| **Auth de `gh` o `az` expirada** — el CLI falla en operaciones criticas | Media | Medio | Fallback a input manual del usuario. Instrucciones claras para re-autenticar. Detectar el error antes de hacer cambios. Soportar ambos CLIs |
 | **Conflicto de contexto** — el skill se ejecuta accidentalmente en el repo equivocado | Baja | Critico | Safety Gate (Paso 0) es OBLIGATORIO y no se puede saltear. Verificacion de remote URL, confirmacion de cliente, ABORT si algo no cuadra |
 | **Scope creep en el fix** — el agente modifica mas de lo necesario | Media | Medio | Regla de "cambio minimo". Guardrail de >15 archivos escala a GUIDED. No refactorizar codigo no relacionado. No agregar features no solicitadas |
 | **Convenciones del cliente desconocidas** — primer ticket en un repo nuevo sin CLAUDE.md documentado | Alta | Bajo | Defaults sensatos (conventional commits, kebab-case branches). Detectar convenciones existentes del historial de git. Preguntar en GUIDED mode |
+| **Self-dogfooding loop infinito** — Fixi crea issue, lo arregla, el arreglo crea otro issue, repite | Media | Alto | Max fixes por dia, cooldown entre ejecuciones, no crear issues sobre issues recien creados, human review gate para self-fixes. Ver [[guardrails]] |
+| **MCP Server expuesto sin auth** — acceso no autorizado al agente | Media | Critico | Token-based auth obligatorio. Rate limiting. Audit log de todas las llamadas. Whitelist de callers si es posible |
 
 ---
 
@@ -147,22 +182,29 @@ Las fases no tienen fechas fijas. El orden de magnitud relativo es:
 
 | Fase | Esfuerzo Relativo | Prerequisito | Notas |
 |------|-------------------|-------------|-------|
-| **Fase 1**: Fundamentos (MVP) | Referencia base (1x) | Skill borrador ya existe | La mas critica. Debe funcionar end-to-end con GitHub Issues antes de avanzar. Estimacion: 2-3 sesiones de trabajo |
-| **Fase 2**: Multi-Source y Clasificacion | ~0.7x de Fase 1 | Fase 1 completada | Parsers son independientes entre si (paralelizables). Clasificacion inteligente es incremental sobre la basica |
-| **Fase 3**: Autonomia y Testing | ~0.8x de Fase 1 | Fase 2 completada | CONFIRM_PLAN es relativamente simple. FULL_AUTO con escaladores requiere mas cuidado. Testing depende del stack del cliente |
-| **Fase 4**: Tracking Triple-Write | ~0.5x de Fase 1 | Fase 1 completada (paralelizable con 2 y 3) | Lectura/escritura de JSON y Markdown. La validacion post-escritura es lo mas importante |
-| **Fase 5**: Hardening y Guardrails | ~0.6x de Fase 1 | Fases 1-4 completadas | Rollback y guardrails son criticos para confianza. Dry-run mode es bonus valioso |
+| **Fase 1**: Fundamentos (MVP) | Referencia base (1x) | Skill borrador ya existe | La mas critica. Debe funcionar end-to-end con GitHub Issues antes de avanzar |
+| **Fase 2**: Multi-Source y Clasificacion | ~0.7x de Fase 1 | Fase 1 completada | Parsers son independientes entre si (paralelizables). Incluye Azure DevOps |
+| **Fase 3**: Autonomia y Testing | ~0.8x de Fase 1 | Fase 2 completada | CONFIRM_PLAN es relativamente simple. FULL_AUTO con escaladores requiere mas cuidado |
+| **Fase 4**: Tracking Triple-Write | ~0.5x de Fase 1 | Fase 1 completada (paralelizable con 2 y 3) | Lectura/escritura de JSON y Markdown |
+| **Fase 5**: Hardening y Guardrails | ~0.6x de Fase 1 | Fases 1-4 completadas | Rollback y guardrails son criticos para confianza |
+| **Fase 6**: Ecosistema e Infra | ~1.5x de Fase 1 | Fases 1-5 estables | Azure IaC, MCP Server, A2A, demo publico, self-dogfooding. Es la mas grande pero modular |
 
-**Nota**: Fase 4 puede desarrollarse en paralelo con Fases 2 y 3 ya que solo depende de Fase 1.
+**Nota**: Fase 4 puede desarrollarse en paralelo con Fases 2 y 3 ya que solo depende de Fase 1. Fase 6 es modular: cada tarea (Terraform, MCP, demo) puede desarrollarse independientemente.
 
 **Velocidad esperada**: Con Claude Code asistiendo, cada fase deberia completarse en 1-3 sesiones de trabajo enfocado. El MVP (Fase 1) es la prioridad absoluta — todo lo demas se construye sobre eso.
+
+**Deliverable GlobalMVM**: Para la demo, se necesitan como minimo Fases 1-2 funcionales + Fase 6 tareas 6.1-6.4 (Azure) + 6.7-6.8 (demo publico). Ver [[BACKLOG]] para tracking.
 
 ---
 
 ## Documentos Relacionados
 
 - [[MASTERPLAN]] — Plan maestro del Proyecto Hydra (fases 0-5)
-- [[CLAUDE]] — Contexto operacional de consultoria-x
-- [[.claude/skills/fix-issue/SKILL|fix-issue SKILL.md]] — Especificacion tecnica del skill (el COMO)
-- [[sistema/PROTOCOLOS|Protocolos]] — Protocolos operacionales (context switch, comunicaciones)
-- [[docs/guias/RISK-MANAGEMENT|Risk Management]] — Gestion de riesgos general del proyecto
+- [[SKILL|fix-issue SKILL.md]] — Workflow de 10 pasos (el COMO)
+- [[SPEC|Especificacion tecnica]] — Spec completa (2,356+ lineas)
+- [[diagrams|Diagramas Mermaid]] — 5 diagramas: flujo, clasificacion, autonomia, tracking, arquitectura
+- [[classification|Taxonomia]] — 7 tipos de issues con keywords y decision tree
+- [[guardrails|Guardrails]] — 13 reglas de seguridad
+- [[BACKLOG|Backlog]] — Items pendientes priorizados
+- [[CLIENT-FACING|Doc para GlobalMVM]] — Documento client-facing (en desarrollo)
+- [[HANDOFF-FROM-HQ|Handoff]] — Contexto de la reunion con GlobalMVM
