@@ -151,7 +151,7 @@
   },
   "S2-T08": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Implementar 13 guardrails como PreToolUse hooks",
     "updated": "2026-04-07T04:30:00"
   },

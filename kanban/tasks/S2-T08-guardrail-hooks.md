@@ -3,7 +3,7 @@ id: S2-T08
 title: Implementar 13 guardrails como PreToolUse hooks
 sprint: S2
 day: 2
-status: pending
+status: done
 priority: P0
 type: implementation
 tags: [agent, python, hooks, guardrails, day-2]

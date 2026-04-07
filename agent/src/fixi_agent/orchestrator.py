@@ -28,6 +28,7 @@ from claude_agent_sdk import (
 )
 
 from .cloner import clone_repo
+from .hooks import make_hooks
 from .parser import WorkItem, parse_work_item
 from .prompts import load_system_prompt
 
@@ -156,7 +157,7 @@ class FixiOrchestrator:
         # Build the initial prompt from the work item
         initial_prompt = self._build_prompt(work_item)
 
-        # Configure the agent
+        # Configure the agent with guardrail hooks
         options = ClaudeAgentOptions(
             system_prompt=system_prompt,
             allowed_tools=[
@@ -166,6 +167,7 @@ class FixiOrchestrator:
             cwd=str(repo_path),
             max_turns=self.max_turns,
             max_budget_usd=self.max_budget_usd,
+            hooks=make_hooks(),
         )
 
         # Run the agent loop and collect output
