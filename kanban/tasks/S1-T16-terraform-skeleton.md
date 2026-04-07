@@ -3,15 +3,15 @@ id: S1-T16
 title: Terraform skeleton en fixi/terraform/
 sprint: S1
 day: 4
-status: pending
+status: in-progress
 priority: P1
 type: implementation
 tags: [terraform, azure, iac, day-4]
 created: 2026-04-07T00:00:00
-updated: 2026-04-07T00:00:00
+updated: 2026-04-07T01:00:00
 estimated: 2h
 actual: ""
-owner: claude
+owner: agent-terraform
 blocks: [S1-T17]
 blocked_by: []
 related_docs: [SPRINT-1, BACKLOG, PLAN]

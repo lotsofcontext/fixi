@@ -3,15 +3,15 @@ id: S1-T13
 title: Agregar parser Azure DevOps Work Items al SKILL.md
 sprint: S1
 day: 3
-status: pending
+status: in-progress
 priority: P1
 type: implementation
 tags: [skill, azure-devops, parser, day-3]
 created: 2026-04-07T00:00:00
-updated: 2026-04-07T00:00:00
+updated: 2026-04-07T01:00:00
 estimated: 45m
 actual: ""
-owner: claude
+owner: agent-skill-ado
 blocks: [S1-T15]
 blocked_by: [S1-T12]
 related_docs: [SPRINT-1, BACKLOG, SKILL, PLAN]

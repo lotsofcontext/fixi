@@ -3,12 +3,12 @@ id: S1-T05
 title: "Sembrar BUG #1 — DivideByZero en CalculadoraConsumo"
 sprint: S1
 day: 1
-status: pending
+status: in-progress
 priority: P1
 type: implementation
 tags: [demo-repo, dotnet, bug-seeded, day-1]
 created: 2026-04-07T00:00:00
-updated: 2026-04-07T00:00:00
+updated: 2026-04-07T01:00:00
 estimated: 30m
 actual: ""
 owner: claude

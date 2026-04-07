@@ -3,15 +3,15 @@ id: S1-T09
 title: Pre-crear 3 work items markdown en docs/issues/
 sprint: S1
 day: 2
-status: pending
+status: in-progress
 priority: P1
 type: docs
 tags: [demo-repo, work-items, day-2]
 created: 2026-04-07T00:00:00
-updated: 2026-04-07T00:00:00
+updated: 2026-04-07T01:00:00
 estimated: 1h
 actual: ""
-owner: claude
+owner: agent-work-items
 blocks: [S1-T12]
 blocked_by: [S1-T08]
 related_docs: [SPRINT-1, BACKLOG]
