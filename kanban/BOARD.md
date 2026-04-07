@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 01:03:23
+> **Última actualización**: 2026-04-07 01:07:20
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,28 +8,27 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | Progress |
 |-------|----------------|------------|-------------|---------|----------|
-| **18** | 0 | 0 | 4 | 14 | **78%** |
+| **18** | 0 | 0 | 3 | 15 | **83%** |
 
 ```
-███████████████████████░░░░░░░ 78%
+████████████████████████░░░░░░ 83%
 ```
 
 ## Por Sprint
 
 | Sprint | Total | Done | In Progress | Pending | Blocked |
 |--------|-------|------|-------------|---------|---------|
-| **S1** | 18 | 14 | 0 | 4 | 0 |
+| **S1** | 18 | 15 | 0 | 3 | 0 |
 
-## 📋 Pending (4)
+## 📋 Pending (3)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S1-T11]] | README bilingüe del demo repo | S1 | D2 | P1 | 45m |
 | [[S1-T12]] | Rehearsal Fixi contra WI-101 → run-01-github.md | S1 | D2 | P1 | 1h30m |
 | [[S1-T15]] | Rehearsal Fixi contra WI-102 y WI-103 (path Azure DevOps) | S1 | D4 | P1 | 2h |
 | [[S1-T17]] | Polish CLIENT-FACING.md con links a runs y Terraform | S1 | D5 | P1 | 1h |
 
-## ✅ Done (14)
+## ✅ Done (15)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -43,6 +42,7 @@
 | [[S1-T08]] | Tests que fallan para los 3 bugs sembrados | S1 | 1h30m | 30m | 2026-04-07T02:15:00 |
 | [[S1-T09]] | Pre-crear 3 work items markdown en docs/issues/ | S1 | 1h | 25m | 2026-04-07T02:30:00 |
 | [[S1-T10]] | CLAUDE.md del demo repo (convenciones .NET) | S1 | 30m | 15m | 2026-04-06T22:55:00 |
+| [[S1-T11]] | README bilingüe del demo repo | S1 | 45m | 20m | 2026-04-07T03:00:00 |
 | [[S1-T13]] | Agregar parser Azure DevOps Work Items al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T14]] | Agregar Azure Repos PR creation al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T16]] | Terraform skeleton en fixi/terraform/ | S1 | 2h | 1h35m | 2026-04-07T02:35:00 |

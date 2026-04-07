@@ -17,9 +17,9 @@ blocked_by: [S1-T08]
 related_docs: [SPRINT-1, BACKLOG]
 commits: [af200ac]
 files_touched:
-  - docs/issues/WI-101-bug-lectura-negativa.md
-  - docs/issues/WI-102-perf-listado-medidores.md
-  - docs/issues/WI-103-security-endpoint-admin.md
+  - fixi-demo-dotnet/docs/issues/WI-101-bug-lectura-negativa.md
+  - fixi-demo-dotnet/docs/issues/WI-102-perf-listado-medidores.md
+  - fixi-demo-dotnet/docs/issues/WI-103-security-endpoint-admin.md
 ---
 
 # S1-T09: Pre-crear 3 work items markdown
@@ -63,9 +63,11 @@ Output del agente:
 
 ## Outcome
 
-3 archivos en `docs/issues/`. Commit: `af200ac`.
+3 archivos creados. Commit inicial en fixi: `af200ac`.
 
-Próximas tareas que se desbloquean: [[S1-T11]] (README demo puede referenciarlos), [[S1-T12]] (rehearsal contra WI-101).
+**Corrección de ubicación posterior**: el agente los puso en `Z:\fixi\docs\issues\` cuando deberían vivir en `Z:\fixi-demo-dotnet\docs\issues\` (donde el usuario clona el demo). Se movieron en [[S1-T11]] como parte del trabajo del README. Commit del move en fixi-demo-dotnet: `f73d62b`. Los archivos se eliminaron de fixi en este branch.
+
+Próximas tareas que se desbloquean: [[S1-T11]] (DONE), [[S1-T12]] (rehearsal contra WI-101).
 
 ## History
 
