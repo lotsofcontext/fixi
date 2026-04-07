@@ -213,7 +213,10 @@ def render_board(tasks: dict[str, dict[str, Any]]) -> str:
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     total = sum(len(c) for c in columns.values())
     counts = {s: len(columns[s]) for s in STATUS_ORDER}
-    progress = round(counts["done"] / total * 100) if total > 0 else 0
+    # Cancelled tasks are excluded from the progress denominator — they
+    # represent decided-not-to-do work, not remaining work.
+    active = total - counts["cancelled"]
+    progress = round(counts["done"] / active * 100) if active > 0 else 0
 
     lines: list[str] = []
     lines.append("# Fixi Kanban Board")
@@ -222,17 +225,19 @@ def render_board(tasks: dict[str, dict[str, Any]]) -> str:
     lines.append(f"> **Auto-generado** por `update_board.py` — NO editar a mano.")
     lines.append(
         "> Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · "
-        "[[BACKLOG|Backlog]] · [[PLAN|Roadmap]]"
+        "[[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]"
     )
     lines.append("")
     lines.append("## Resumen")
     lines.append("")
-    lines.append("| Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | Progress |")
-    lines.append("|-------|----------------|------------|-------------|---------|----------|")
+    lines.append("| Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |")
+    lines.append("|-------|----------------|------------|-------------|---------|---------------|----------|")
     lines.append(
         f"| **{total}** | {counts['in-progress']} | {counts['blocked']} | "
-        f"{counts['pending']} | {counts['done']} | **{progress}%** |"
+        f"{counts['pending']} | {counts['done']} | {counts['cancelled']} | **{progress}%** |"
     )
+    lines.append("")
+    lines.append(f"_Progress = done / (total − cancelled) = {counts['done']}/{active}_")
     lines.append("")
 
     # Progress bar
@@ -255,15 +260,18 @@ def render_board(tasks: dict[str, dict[str, Any]]) -> str:
     if sprints:
         lines.append("## Por Sprint")
         lines.append("")
-        lines.append("| Sprint | Total | Done | In Progress | Pending | Blocked |")
-        lines.append("|--------|-------|------|-------------|---------|---------|")
+        lines.append("| Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |")
+        lines.append("|--------|-------|------|-------------|---------|---------|-----------|----------|")
         for sprint in sorted(sprints.keys()):
             counts_s = sprints[sprint]
             total_s = sum(counts_s.values())
+            active_s = total_s - counts_s.get("cancelled", 0)
+            progress_s = round(counts_s.get("done", 0) / active_s * 100) if active_s > 0 else 0
             lines.append(
                 f"| **{sprint}** | {total_s} | {counts_s.get('done', 0)} | "
                 f"{counts_s.get('in-progress', 0)} | {counts_s.get('pending', 0)} | "
-                f"{counts_s.get('blocked', 0)} |"
+                f"{counts_s.get('blocked', 0)} | {counts_s.get('cancelled', 0)} | "
+                f"**{progress_s}%** |"
             )
         lines.append("")
 

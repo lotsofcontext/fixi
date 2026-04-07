@@ -85,9 +85,9 @@
   },
   "S1-T15": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "cancelled",
     "title": "Rehearsal Fixi contra WI-102 y WI-103 (path Azure DevOps)",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T04:30:00"
   },
   "S1-T16": {
     "sprint": "S1",
@@ -106,5 +106,125 @@
     "status": "done",
     "title": "Actualizar descripción + topics del repo lotsofcontext/fixi en GitHub",
     "updated": "2026-04-07T00:00:00"
+  },
+  "S2-T01": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Crear fixi/agent/ skeleton (pyproject.toml, src, tests, README)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T02": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Instalar claude-agent-sdk + verificar import",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T03": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar prompts.py (loader de SKILL.md)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T04": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar parser.py (work item URL → estructura)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T05": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar cloner.py (git clone a tmpdir con auth)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T06": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar orchestrator.py (ClaudeSDKClient wrapper)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T07": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Smoke test — orchestrator resuelve WI-101 sin hooks",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T08": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar 13 guardrails como PreToolUse hooks",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T09": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar audit log (PostToolUse hook → JSONL)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T10": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar cli.py (click) — fixi resolve",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T11": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Implementar output.py (JSON + human formatters)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T12": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Wire CLI → orchestrator → output end-to-end",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T13": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Tests unitarios — parser, hooks, prompts",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T14": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Dockerfile multi-stage (Node + Claude Code + Python + fixi)",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T15": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "docker-compose.yml para dev local",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T16": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "GitHub Actions workflow de ejemplo",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T17": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Azure Pipelines workflow de ejemplo",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T18": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Rehearsal end-to-end del agent CLI vs WI-101/102/103",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T19": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Update CLIENT-FACING.md — narrativa skill → agent",
+    "updated": "2026-04-07T04:30:00"
+  },
+  "S2-T20": {
+    "sprint": "S2",
+    "status": "pending",
+    "title": "Update PLAN.md — agent como Phase 6 central",
+    "updated": "2026-04-07T04:30:00"
   }
 }
