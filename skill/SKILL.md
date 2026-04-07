@@ -345,7 +345,7 @@ Por cada tipo de validacion, buscar en este orden y registrar el primero encontr
 5. `.flake8` → `flake8 .`
 6. `pyproject.toml [tool.black]` → `black --check .`
 7. `.golangci.yml` → `golangci-lint run`
-8. `rustfmt.toml` o presencia de `cargo` → `cargo fmt --check && cargo clippy -- -D warnings`
+8. `rustfmt.toml` o presencia de `cargo` → `cargo fmt --check; cargo clippy --all-targets -- -D warnings` (ambos deben correr aunque uno falle — no usar `&&`)
 9. `*.csproj` → `dotnet format --verify-no-changes`
 10. `.editorconfig` solo (sin tool especifico) → skip lint, marcar N/A
 
@@ -499,26 +499,32 @@ if [ "$IS_AZURE_REPOS" = "false" ]; then
 
 ## Descripcion tecnica
 
-{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria. Si es feature: por que se necesita y cual es la solucion implementada. 2-4 oraciones tecnicas.}
+{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria.
+Si es feature: por que se necesita y cual es la solucion implementada.
+Si es refactor: que estructura cambia y por que mejora.
+2-4 oraciones tecnicas, no marketing.}
 
 ## Cambios realizados
 
+{Lista con bullet points, un item por archivo modificado:}
 - `path/to/file.ts` — {que se cambio y por que}
-- `path/to/test.ts` — {test agregado/modificado}
+- `path/to/test.ts` — {test agregado/modificado, que cubre}
 
 ## Posibles impactos
 
 **Riesgo**: {LOW/MEDIUM/HIGH}
-**Areas afectadas**: {modulos o features tocados}
-**Breaking changes**: {No / Si — detalles}
+**Areas afectadas**: {modulos, features o subsistemas que tocan estos cambios}
+**Breaking changes**: {No / Si — detalles especificos si Si}
 **Side effects esperados**: {lista o "Ninguno"}
-**Verificacion manual recomendada**: {pasos para que el reviewer pruebe el fix}
+**Verificacion manual recomendada**: {pasos especificos para que el reviewer pruebe el fix}
 
 ## Validaciones ejecutadas
 
 - **Tests**: {PASS/FAIL/N/A} — `{comando}` — {X passed, Y failed}
 - **Lint**: {PASS/FAIL/N/A} — `{comando}` — {0 errors, N warnings}
 - **Build**: {PASS/FAIL/N/A} — `{comando}` — {OK / {N errors}}
+
+{Si hay fails pre-existentes (no introducidos por este PR): listarlos aqui con disclaimer}
 
 ## Tracking
 
@@ -553,26 +559,32 @@ if [ "$IS_AZURE_REPOS" = "true" ]; then
 
 ## Descripcion tecnica
 
-{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria. Si es feature: por que se necesita y cual es la solucion implementada. 2-4 oraciones tecnicas.}
+{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria.
+Si es feature: por que se necesita y cual es la solucion implementada.
+Si es refactor: que estructura cambia y por que mejora.
+2-4 oraciones tecnicas, no marketing.}
 
 ## Cambios realizados
 
+{Lista con bullet points, un item por archivo modificado:}
 - `path/to/file.ts` — {que se cambio y por que}
-- `path/to/test.ts` — {test agregado/modificado}
+- `path/to/test.ts` — {test agregado/modificado, que cubre}
 
 ## Posibles impactos
 
 **Riesgo**: {LOW/MEDIUM/HIGH}
-**Areas afectadas**: {modulos o features tocados}
-**Breaking changes**: {No / Si — detalles}
+**Areas afectadas**: {modulos, features o subsistemas que tocan estos cambios}
+**Breaking changes**: {No / Si — detalles especificos si Si}
 **Side effects esperados**: {lista o "Ninguno"}
-**Verificacion manual recomendada**: {pasos para que el reviewer pruebe el fix}
+**Verificacion manual recomendada**: {pasos especificos para que el reviewer pruebe el fix}
 
 ## Validaciones ejecutadas
 
 - **Tests**: {PASS/FAIL/N/A} — `{comando}` — {X passed, Y failed}
 - **Lint**: {PASS/FAIL/N/A} — `{comando}` — {0 errors, N warnings}
 - **Build**: {PASS/FAIL/N/A} — `{comando}` — {OK / {N errors}}
+
+{Si hay fails pre-existentes (no introducidos por este PR): listarlos aqui con disclaimer}
 
 ## Tracking
 
