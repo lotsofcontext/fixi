@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 12:02:07
+> **Última actualización**: 2026-04-07 12:43:36
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 19 | 18 | 1 | **49%** |
+| **38** | 0 | 0 | 18 | 19 | 1 | **51%** |
 
-_Progress = done / (total − cancelled) = 18/37_
+_Progress = done / (total − cancelled) = 19/37_
 
 ```
-██████████████░░░░░░░░░░░░░░░░ 49%
+███████████████░░░░░░░░░░░░░░░ 51%
 ```
 
 ## Por Sprint
@@ -21,13 +21,12 @@ _Progress = done / (total − cancelled) = 18/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 1 | 0 | 19 | 0 | 0 | **5%** |
+| **S2** | 20 | 2 | 0 | 18 | 0 | 0 | **10%** |
 
-## 📋 Pending (19)
+## 📋 Pending (18)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T02]] | Instalar claude-agent-sdk + verificar import | S2 | D1 | P0 | 15m |
 | [[S2-T03]] | Implementar prompts.py (loader de SKILL.md) | S2 | D1 | P0 | 30m |
 | [[S2-T04]] | Implementar parser.py (work item URL → estructura) | S2 | D1 | P1 | 1h |
 | [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | D1 | P1 | 45m |
@@ -47,7 +46,7 @@ _Progress = done / (total − cancelled) = 18/37_
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (18)
+## ✅ Done (19)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -69,6 +68,7 @@ _Progress = done / (total − cancelled) = 18/37_
 | [[S1-T17]] | Polish CLIENT-FACING.md con links a runs y Terraform | S1 | 1h | 30m | 2026-04-07T03:30:00 |
 | [[S1-T18]] | Actualizar descripción + topics del repo lotsofcontext/fixi en GitHub | S1 | 15m | 5m | 2026-04-07T00:00:00 |
 | [[S2-T01]] | Crear fixi/agent/ skeleton (pyproject.toml, src, tests, README) | S2 | 30m | 15m | 2026-04-07T05:15:00 |
+| [[S2-T02]] | Instalar claude-agent-sdk + verificar import | S2 | 15m | 20m | 2026-04-07T05:50:00 |
 
 ## 🚫 Cancelled (1)
 

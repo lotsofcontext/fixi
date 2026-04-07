@@ -115,9 +115,9 @@
   },
   "S2-T02": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Instalar claude-agent-sdk + verificar import",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T05:50:00"
   },
   "S2-T03": {
     "sprint": "S2",
