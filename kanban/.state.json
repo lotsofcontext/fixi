@@ -139,9 +139,9 @@
   },
   "S2-T06": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "in-progress",
     "title": "Implementar orchestrator.py (ClaudeSDKClient wrapper)",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T07:15:00"
   },
   "S2-T07": {
     "sprint": "S2",

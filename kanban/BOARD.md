@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 13:25:13
+> **Última actualización**: 2026-04-07 15:49:32
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,7 +8,7 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 15 | 22 | 1 | **59%** |
+| **38** | 1 | 0 | 14 | 22 | 1 | **59%** |
 
 _Progress = done / (total − cancelled) = 22/37_
 
@@ -21,13 +21,18 @@ _Progress = done / (total − cancelled) = 22/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 5 | 0 | 15 | 0 | 0 | **25%** |
+| **S2** | 20 | 5 | 1 | 14 | 0 | 0 | **25%** |
 
-## 📋 Pending (15)
+## 🔄 In Progress (1)
+
+| ID | Task | Sprint | Day | Owner | Updated |
+|----|------|--------|-----|-------|---------|
+| [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | D1 | claude | 2026-04-07T07:15:00 |
+
+## 📋 Pending (14)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | D1 | P0 | 1h |
 | [[S2-T07]] | Smoke test — orchestrator resuelve WI-101 sin hooks | S2 | D1 | P0 | 30m |
 | [[S2-T08]] | Implementar 13 guardrails como PreToolUse hooks | S2 | D2 | P0 | 2h |
 | [[S2-T09]] | Implementar audit log (PostToolUse hook → JSONL) | S2 | D2 | P1 | 30m |
