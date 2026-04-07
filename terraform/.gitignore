@@ -1,0 +1,36 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files — state lives in the remote backend (see versions.tf)
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude auto-loaded tfvars which are LIKELY to contain sensitive data.
+# NOTE: environments/*.tfvars are committed intentionally as examples —
+# they contain only placeholder values.
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Local .tfvars in the root (not inside environments/)
+/dev.tfvars
+/staging.tfvars
+/prod.tfvars
+/terraform.tfvars
+
+# Ignore override files as they are usually used to override
+# resources locally and so should not be checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# Plan outputs
+*.tfplan

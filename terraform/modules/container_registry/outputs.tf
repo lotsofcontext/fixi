@@ -1,0 +1,18 @@
+###############################################################################
+# modules/container_registry/outputs.tf
+###############################################################################
+
+output "acr_id" {
+  description = "Full resource ID of the Azure Container Registry."
+  value       = azurerm_container_registry.this.id
+}
+
+output "acr_name" {
+  description = "Name of the Azure Container Registry."
+  value       = azurerm_container_registry.this.name
+}
+
+output "acr_login_server" {
+  description = "Login server URL, e.g. acrfixidevxxxxxx.azurecr.io."
+  value       = azurerm_container_registry.this.login_server
+}
