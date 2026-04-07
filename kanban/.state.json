@@ -25,27 +25,27 @@
   },
   "S1-T05": {
     "sprint": "S1",
-    "status": "in-progress",
+    "status": "done",
     "title": "Sembrar BUG #1 — DivideByZero en CalculadoraConsumo",
-    "updated": "2026-04-07T01:00:00"
+    "updated": "2026-04-07T01:15:00"
   },
   "S1-T06": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "done",
     "title": "Sembrar PERF #2 — N+1 en MedidorService.ListarConResumen",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T01:30:00"
   },
   "S1-T07": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "done",
     "title": "Sembrar SECURITY #3 — AdminController sin [Authorize]",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T01:45:00"
   },
   "S1-T08": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "done",
     "title": "Tests que fallan para los 3 bugs sembrados",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T02:15:00"
   },
   "S1-T09": {
     "sprint": "S1",
