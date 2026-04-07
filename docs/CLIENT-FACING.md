@@ -197,9 +197,14 @@ PR CREADO: https://github.com/lotsofcontext/fixi-demo-dotnet/pull/1
 FIX COMPLETE
 ```
 
-**Tiempo total**: ~3 minutos (automático) + ~5-10 minutos (revisión humana del PR).
+**Tiempo total medido**: **3m 51s** (ejecución automática de Fixi) + ~5-10 minutos (revisión humana del PR).
 
-> ⏳ Las transcripciones reales y los screenshots de los PRs creados durante los rehearsals end-to-end estarán enlazados aquí en cuanto estén disponibles: `docs/demos/run-01-github.md` y `docs/demos/run-02-ado.md`.
+> ✅ **Rehearsal real ejecutado 2026-04-07**:
+> - Transcript completo: [`fixi-demo-dotnet/docs/demos/run-01-github.md`](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/demos/run-01-github.md)
+> - PR resultante: [fixi-demo-dotnet#1](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/1)
+> - Métricas reales: +9 líneas modificadas, 1 archivo, tests pasaron de 2 rojos → 4 verdes, 0 hallucinations
+>
+> ⏳ El rehearsal por el path Azure DevOps (`docs/demos/run-02-ado.md`) está pendiente — requiere setup de un sandbox ADO con PAT.
 
 ### El caso especial: WI-103 (security)
 
@@ -326,11 +331,12 @@ GlobalMVM corre 99% sobre Azure. Fixi soporta el flujo nativo de Azure DevOps:
 
 1. ✅ **Repo cloneable entregado** — `lotsofcontext/fixi` + `lotsofcontext/fixi-demo-dotnet`, ambos públicos
 2. ✅ **Terraform analizable entregado** — 25 archivos en `terraform/`, validado, documentado
-3. ⏳ **Rehearsal end-to-end documentado** — pendiente: ejecución real de Fixi contra los 3 work items con transcripts en `docs/demos/`
-4. ⏳ **GlobalMVM revisa los repos** — feedback técnico, preguntas, refinamientos
-5. ⏳ **Caso de uso real ("el chicharrón")** — GlobalMVM provee un caso concreto de uno de sus proyectos para validar contra su stack real
-6. ⏳ **Reunión de aclaración** — revisión técnica conjunta
-7. ⏳ **Piloto acotado** — implementación en un proyecto real con un equipo pequeño
+3. ✅ **Primer rehearsal end-to-end documentado** — Fixi resolvió WI-101 en **3m 51s**. PR [fixi-demo-dotnet#1](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/1) + transcript en [`docs/demos/run-01-github.md`](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/demos/run-01-github.md)
+4. ⏳ **Rehearsal por el path Azure DevOps** — WI-102 y WI-103, requiere setup de ADO sandbox
+5. ⏳ **GlobalMVM revisa los repos** — feedback técnico, preguntas, refinamientos
+6. ⏳ **Caso de uso real ("el chicharrón")** — GlobalMVM provee un caso concreto de uno de sus proyectos para validar contra su stack real
+7. ⏳ **Reunión de aclaración** — revisión técnica conjunta
+8. ⏳ **Piloto acotado** — implementación en un proyecto real con un equipo pequeño
 
 ---
 

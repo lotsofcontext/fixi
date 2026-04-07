@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 01:12:05
+> **Última actualización**: 2026-04-07 11:09:44
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,26 +8,25 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | Progress |
 |-------|----------------|------------|-------------|---------|----------|
-| **18** | 0 | 0 | 2 | 16 | **89%** |
+| **18** | 0 | 0 | 1 | 17 | **94%** |
 
 ```
-██████████████████████████░░░░ 89%
+████████████████████████████░░ 94%
 ```
 
 ## Por Sprint
 
 | Sprint | Total | Done | In Progress | Pending | Blocked |
 |--------|-------|------|-------------|---------|---------|
-| **S1** | 18 | 16 | 0 | 2 | 0 |
+| **S1** | 18 | 17 | 0 | 1 | 0 |
 
-## 📋 Pending (2)
+## 📋 Pending (1)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S1-T12]] | Rehearsal Fixi contra WI-101 → run-01-github.md | S1 | D2 | P1 | 1h30m |
 | [[S1-T15]] | Rehearsal Fixi contra WI-102 y WI-103 (path Azure DevOps) | S1 | D4 | P1 | 2h |
 
-## ✅ Done (16)
+## ✅ Done (17)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -42,6 +41,7 @@
 | [[S1-T09]] | Pre-crear 3 work items markdown en docs/issues/ | S1 | 1h | 25m | 2026-04-07T02:30:00 |
 | [[S1-T10]] | CLAUDE.md del demo repo (convenciones .NET) | S1 | 30m | 15m | 2026-04-06T22:55:00 |
 | [[S1-T11]] | README bilingüe del demo repo | S1 | 45m | 20m | 2026-04-07T03:00:00 |
+| [[S1-T12]] | Rehearsal Fixi contra WI-101 → run-01-github.md | S1 | 1h30m | 3m51s | 2026-04-07T04:15:00 |
 | [[S1-T13]] | Agregar parser Azure DevOps Work Items al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T14]] | Agregar Azure Repos PR creation al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T16]] | Terraform skeleton en fixi/terraform/ | S1 | 2h | 1h35m | 2026-04-07T02:35:00 |
