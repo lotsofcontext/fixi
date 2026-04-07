@@ -171,10 +171,33 @@ El usuario puede cambiar nivel en cualquier momento: "sigue en auto" o "para, qu
 
 ## Paso 4: Analisis de Codigo (Root Cause)
 
-### 4.1 Entender la Arquitectura
-- Leer `README.md` o `CLAUDE.md` del repo para overview
-- Detectar stack: `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `pom.xml`
+### 4.1 Entender la Arquitectura y Cargar Documentacion Tecnica
+
+**Conocimiento del repo**:
+- Leer `README.md`, `CLAUDE.md`, `CONTRIBUTING.md` del repo para overview y convenciones
+- Detectar stack: `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `pom.xml`, `*.csproj`, `*.sln`
 - Identificar estructura: monorepo vs single-repo, framework, entry points
+
+**Documentacion tecnica relacionada al issue** (fuente de conocimiento explicita del prompt del cliente):
+- Buscar archivos relevantes en `docs/`, `wiki/`, o cualquier carpeta de documentacion
+- `Glob` por `**/*.md` cerca de los archivos potencialmente afectados por el issue
+- Leer comentarios de codigo cercanos al area del issue (top-of-file docs, JSDoc/XMLdoc/Sphinx)
+- Si el repo tiene un ADR (`docs/adr/` o `docs/decisions/`), revisar decisiones relevantes al modulo afectado
+- Si el repo referencia una wiki externa en su README, intentar `WebFetch` (puede fallar por auth — anotar y continuar)
+
+**Estandares definidos del repo** (Cap 4 del prompt: "buenas practicas y estandares definidos"):
+- Cargar `.editorconfig` si existe (indentation, line endings, charset)
+- Detectar configs de linter para preservar el estilo:
+  - `.eslintrc*`, `eslint.config.js` → JavaScript/TypeScript
+  - `pyproject.toml [tool.ruff]`, `.ruff.toml`, `.flake8` → Python
+  - `.golangci.yml` → Go
+  - `rustfmt.toml` → Rust
+  - `.csharpierrc`, `.editorconfig` con reglas C# → .NET
+- Detectar convenciones de testing (donde viven los tests, naming pattern, fixture conventions)
+- Buscar `STYLE.md`, `CODING_STANDARDS.md`, `CONTRIBUTING.md` con reglas adicionales del equipo
+- Cargar el `CLAUDE.md` del repo si existe (puede tener reglas especificas para agentes)
+
+Estos hallazgos se incluyen en el contexto del analisis (Paso 4.3) y se **respetan obligatoriamente** en la implementacion (Paso 6). Si los estandares estan en conflicto entre si (ej: `.editorconfig` dice 2 espacios y `.eslintrc` dice 4), priorizar en este orden: CLAUDE.md del repo > linter config > .editorconfig > defaults del lenguaje.
 
 ### 4.2 Buscar la Causa Raiz
 1. **Keyword search**: Extraer terminos clave del issue (error messages, nombres de funciones, componentes)
@@ -295,42 +318,94 @@ En modo CONFIRM_PLAN: commitear todos los cambios segun el plan aprobado.
 
 ---
 
-## Paso 7: Ejecutar Tests
+## Paso 7: Ejecutar Validaciones Basicas
 
-### Detectar test runner
-Buscar en este orden:
-1. Campo "test commands" en CLAUDE.md del cliente o del repo
-2. `package.json` → scripts.test, scripts."test:unit", scripts."test:integration"
+El prompt del cliente exige **"validaciones basicas"** en plural (Cap 6 del North Star). Esto significa **ejecutar los 3 tipos de validacion estandar cuando esten disponibles en el repo**: tests, lint, build. Si el repo no tiene runner para una de las tres, **documentarlo en el PR como N/A — no fallar**.
+
+### 7.1 Detectar runners disponibles
+
+Por cada tipo de validacion, buscar en este orden y registrar el primero encontrado:
+
+#### Tests
+1. Campo "test commands" en `CLAUDE.md` del cliente o del repo
+2. `package.json` → `scripts.test`, `scripts."test:unit"`, `scripts."test:integration"`
 3. `Makefile` → target `test`
 4. `pyproject.toml` / `pytest.ini` → pytest config
 5. `Cargo.toml` → `cargo test`
 6. `go.mod` → `go test ./...`
+7. `*.sln` / `*.csproj` → `dotnet test`
+8. `pom.xml` → `mvn test`
+9. `build.gradle` / `build.gradle.kts` → `gradle test`
 
-### Ejecutar
+#### Lint
+1. Campo "lint commands" en `CLAUDE.md` del cliente o del repo
+2. `package.json` → `scripts.lint`, `scripts."lint:check"`
+3. `.eslintrc*` / `eslint.config.js` → `npx eslint .`
+4. `pyproject.toml [tool.ruff]` o `ruff.toml` → `ruff check .`
+5. `.flake8` → `flake8 .`
+6. `pyproject.toml [tool.black]` → `black --check .`
+7. `.golangci.yml` → `golangci-lint run`
+8. `rustfmt.toml` o presencia de `cargo` → `cargo fmt --check && cargo clippy -- -D warnings`
+9. `*.csproj` → `dotnet format --verify-no-changes`
+10. `.editorconfig` solo (sin tool especifico) → skip lint, marcar N/A
+
+#### Build
+1. Campo "build commands" en `CLAUDE.md` del cliente o del repo
+2. `package.json` → `scripts.build`
+3. `Makefile` → target `build` o `all`
+4. `Cargo.toml` → `cargo build --release`
+5. `go.mod` → `go build ./...`
+6. `*.sln` / `*.csproj` → `dotnet build`
+7. `pom.xml` → `mvn compile`
+8. `build.gradle` → `gradle build`
+
+### 7.2 Ejecutar las validaciones (en orden)
+
+Ejecutar **en este orden**: tests → lint → build. Capturar exit code y output resumido de cada una. Si una falla, **continuar con las siguientes** para tener un reporte completo, no abortar a la primera.
+
 ```bash
-# Ejemplo para Node.js
+# Ejemplo .NET
+dotnet test 2>&1 | tail -50
+dotnet format --verify-no-changes 2>&1 | tail -20
+dotnet build 2>&1 | tail -20
+
+# Ejemplo Node.js
 npm test 2>&1 | tail -50
+npm run lint 2>&1 | tail -20
+npm run build 2>&1 | tail -20
 
-# Ejemplo para Python
+# Ejemplo Python
 python -m pytest tests/ -v 2>&1 | tail -50
-
-# Ejemplo para Rust
-cargo test 2>&1 | tail -50
+ruff check . 2>&1 | tail -20
+# Build N/A para libs Python puras — anotar
 ```
 
-### Interpretar resultados
-- **Tests pasan**: Continuar
-- **Tests fallan en NUESTRO codigo**: Arreglar y re-commitear
-- **Tests fallan pre-existentes** (antes de nuestros cambios): Documentar en PR, NO arreglar
-- **No hay tests**: Notar en PR. Si el fix es non-trivial, escribir test de regresion
-- **No hay infraestructura de tests**: Notar en PR, no bloquear
+### 7.3 Interpretar resultados
 
-**Output al usuario:**
+Por cada validacion:
+
+| Resultado | Accion |
+|-----------|--------|
+| **PASS** | Continuar |
+| **FAIL por nuestro codigo** | Arreglar y re-correr la validacion. Iterar hasta verde |
+| **FAIL pre-existente** (estaba rojo antes del fix) | **Documentar en PR**, NO arreglar (scope creep) |
+| **No hay runner detectado** | Anotar en el PR como `N/A — no detectado en el repo` |
+| **No hay infraestructura** (ej: build sin compilador instalado en el sandbox) | Anotar en el PR, no bloquear |
+
+**Regla**: si el fix introduce un **nuevo failure** en cualquiera de las 3 validaciones, hay que arreglarlo antes de crear el PR. Si los failures son pre-existentes (estaban rojos antes del fix), se documentan pero no se arreglan — eso es scope creep.
+
+**Importante**: para verificar si un failure es "pre-existente", correr la validacion contra el branch base ANTES de crear la rama del fix (snapshot). Comparar despues.
+
+### 7.4 Output al usuario
+
 ```
-TESTS: {PASS/FAIL/SKIP/NO_TESTS}
-  Ejecutado: {comando}
-  Resultado: {X passed, Y failed, Z skipped}
-  {Si fallo: explicacion y accion tomada}
+VALIDACIONES BASICAS:
+  Tests:  {PASS/FAIL/N/A}  comando: `{cmd}`  resultado: {X passed, Y failed, Z skipped}
+  Lint:   {PASS/FAIL/N/A}  comando: `{cmd}`  resultado: {0 errors, N warnings}
+  Build:  {PASS/FAIL/N/A}  comando: `{cmd}`  resultado: {OK/{N errors}}
+
+  {Si hay fails introducidos por el fix: explicacion + accion tomada (arreglado, escalado a usuario)}
+  {Si hay fails pre-existentes: documentado para PR, no se arreglo (scope creep)}
 ```
 
 ---
@@ -355,7 +430,7 @@ git push -u origin {branch_name}
 
 ### Template del body (compartido entre GitHub y Azure Repos)
 
-El body del PR es **identico** en ambas plataformas. Escribirlo a un archivo temporal para reutilizarlo:
+El body del PR es **identico** en ambas plataformas. Tiene **las 3 secciones nombradas que el cliente exige** en Cap 8 del North Star: **descripcion tecnica**, **cambios realizados**, y **posibles impactos**. Escribirlo a un archivo temporal para reutilizarlo:
 
 ```markdown
 ## Issue
@@ -365,23 +440,37 @@ El body del PR es **identico** en ambas plataformas. Escribirlo a un archivo tem
 ## Clasificacion
 
 **Tipo**: {bug/feature/refactor/security/performance/docs/chore}
-**Riesgo**: {LOW/MEDIUM/HIGH}
+**Prioridad**: {critica/alta/media/baja}
 **Fuente**: {github/linear/azure-devops/jira/free-text}
 
-## Causa Raiz
+## Descripcion tecnica
 
-{1-3 oraciones explicando que estaba mal y por que}
+{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria.
+Si es feature: por que se necesita y cual es la solucion implementada.
+Si es refactor: que estructura cambia y por que mejora.
+2-4 oraciones tecnicas, no marketing.}
 
-## Cambios
+## Cambios realizados
 
 {Lista con bullet points, un item por archivo modificado:}
 - `path/to/file.ts` — {que se cambio y por que}
+- `path/to/test.ts` — {test agregado/modificado, que cubre}
 
-## Testing
+## Posibles impactos
 
-- [ ] Tests existentes pasan
-- [ ] Tests nuevos agregados (si aplica)
-- [ ] Verificacion manual: {pasos para verificar}
+**Riesgo**: {LOW/MEDIUM/HIGH}
+**Areas afectadas**: {modulos, features o subsistemas que tocan estos cambios}
+**Breaking changes**: {No / Si — detalles especificos si Si}
+**Side effects esperados**: {lista o "Ninguno"}
+**Verificacion manual recomendada**: {pasos especificos para que el reviewer pruebe el fix}
+
+## Validaciones ejecutadas
+
+- **Tests**: {PASS/FAIL/N/A} — `{comando}` — {X passed, Y failed}
+- **Lint**: {PASS/FAIL/N/A} — `{comando}` — {0 errors, N warnings}
+- **Build**: {PASS/FAIL/N/A} — `{comando}` — {OK / {N errors}}
+
+{Si hay fails pre-existentes (no introducidos por este PR): listarlos aqui con disclaimer}
 
 ## Tracking
 
@@ -405,22 +494,31 @@ if [ "$IS_AZURE_REPOS" = "false" ]; then
 ## Clasificacion
 
 **Tipo**: {bug/feature/refactor/security/performance/docs/chore}
-**Riesgo**: {LOW/MEDIUM/HIGH}
+**Prioridad**: {critica/alta/media/baja}
 **Fuente**: {github/linear/azure-devops/jira/free-text}
 
-## Causa Raiz
+## Descripcion tecnica
 
-{1-3 oraciones explicando que estaba mal y por que}
+{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria. Si es feature: por que se necesita y cual es la solucion implementada. 2-4 oraciones tecnicas.}
 
-## Cambios
+## Cambios realizados
 
 - `path/to/file.ts` — {que se cambio y por que}
+- `path/to/test.ts` — {test agregado/modificado}
 
-## Testing
+## Posibles impactos
 
-- [ ] Tests existentes pasan
-- [ ] Tests nuevos agregados (si aplica)
-- [ ] Verificacion manual: {pasos para verificar}
+**Riesgo**: {LOW/MEDIUM/HIGH}
+**Areas afectadas**: {modulos o features tocados}
+**Breaking changes**: {No / Si — detalles}
+**Side effects esperados**: {lista o "Ninguno"}
+**Verificacion manual recomendada**: {pasos para que el reviewer pruebe el fix}
+
+## Validaciones ejecutadas
+
+- **Tests**: {PASS/FAIL/N/A} — `{comando}` — {X passed, Y failed}
+- **Lint**: {PASS/FAIL/N/A} — `{comando}` — {0 errors, N warnings}
+- **Build**: {PASS/FAIL/N/A} — `{comando}` — {OK / {N errors}}
 
 ## Tracking
 
@@ -450,22 +548,31 @@ if [ "$IS_AZURE_REPOS" = "true" ]; then
 ## Clasificacion
 
 **Tipo**: {bug/feature/refactor/security/performance/docs/chore}
-**Riesgo**: {LOW/MEDIUM/HIGH}
+**Prioridad**: {critica/alta/media/baja}
 **Fuente**: {github/linear/azure-devops/jira/free-text}
 
-## Causa Raiz
+## Descripcion tecnica
 
-{1-3 oraciones explicando que estaba mal y por que}
+{Que es el problema o la mejora. Si es bug: causa raiz exacta y por que ocurria. Si es feature: por que se necesita y cual es la solucion implementada. 2-4 oraciones tecnicas.}
 
-## Cambios
+## Cambios realizados
 
 - `path/to/file.ts` — {que se cambio y por que}
+- `path/to/test.ts` — {test agregado/modificado}
 
-## Testing
+## Posibles impactos
 
-- [ ] Tests existentes pasan
-- [ ] Tests nuevos agregados (si aplica)
-- [ ] Verificacion manual: {pasos para verificar}
+**Riesgo**: {LOW/MEDIUM/HIGH}
+**Areas afectadas**: {modulos o features tocados}
+**Breaking changes**: {No / Si — detalles}
+**Side effects esperados**: {lista o "Ninguno"}
+**Verificacion manual recomendada**: {pasos para que el reviewer pruebe el fix}
+
+## Validaciones ejecutadas
+
+- **Tests**: {PASS/FAIL/N/A} — `{comando}` — {X passed, Y failed}
+- **Lint**: {PASS/FAIL/N/A} — `{comando}` — {0 errors, N warnings}
+- **Build**: {PASS/FAIL/N/A} — `{comando}` — {OK / {N errors}}
 
 ## Tracking
 
