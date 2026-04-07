@@ -1,0 +1,101 @@
+# Fixi Agent — Example Azure DevOps Pipeline
+#
+# This pipeline demonstrates how to invoke Fixi from Azure Pipelines.
+# Copy this to your Azure DevOps project and configure Variable Groups.
+#
+# Trigger: manual with parameters.
+# Can also be triggered by work item state changes via Service Hooks.
+#
+# Prerequisites:
+#   - Variable Group "fixi-secrets" with:
+#     - ANTHROPIC_API_KEY (secret)
+#     - AZURE_DEVOPS_PAT (secret, if using ADO repos)
+#   - Ubuntu agent pool
+#   - Python 3.11+ (available on ubuntu-latest)
+#   - Node.js (available on ubuntu-latest)
+
+trigger: none
+pr: none
+
+parameters:
+  - name: workItemUrl
+    displayName: "Work Item URL or file path"
+    type: string
+  - name: repoUrl
+    displayName: "Target repo URL (leave blank for current repo)"
+    type: string
+    default: ""
+  - name: trackingMode
+    displayName: "Tracking mode"
+    type: string
+    default: "none"
+    values:
+      - none
+      - client
+      - hq
+
+variables:
+  - group: fixi-secrets  # Contains ANTHROPIC_API_KEY and AZURE_DEVOPS_PAT
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  # 1. Checkout Fixi from GitHub (or your internal mirror)
+  - checkout: git://lotsofcontext/fixi@main
+    displayName: "Checkout Fixi"
+    path: fixi
+
+  # 2. Setup Python
+  - task: UsePythonVersion@0
+    displayName: "Setup Python 3.12"
+    inputs:
+      versionSpec: "3.12"
+      addToPath: true
+
+  # 3. Install Claude Code CLI
+  - script: |
+      npm install -g @anthropic-ai/claude-code
+      claude --version
+    displayName: "Install Claude Code CLI"
+
+  # 4. Install Fixi agent
+  - script: |
+      cd $(Pipeline.Workspace)/fixi/agent
+      pip install -e .
+      fixi --version
+      fixi check
+    displayName: "Install Fixi agent"
+
+  # 5. Determine target repo flag
+  - script: |
+      if [ -n "${{ parameters.repoUrl }}" ]; then
+        echo "##vso[task.setvariable variable=repoFlag]--repo ${{ parameters.repoUrl }}"
+      else
+        echo "##vso[task.setvariable variable=repoFlag]"
+      fi
+    displayName: "Set target repo"
+
+  # 6. Run Fixi
+  - script: |
+      fixi resolve \
+        --work-item "${{ parameters.workItemUrl }}" \
+        $(repoFlag) \
+        --tracking-mode "${{ parameters.trackingMode }}" \
+        --skill-dir $(Pipeline.Workspace)/fixi/skill \
+        --output json \
+        --verbose \
+        | tee $(Build.ArtifactStagingDirectory)/fixi-result.json
+    displayName: "Resolve issue with Fixi"
+    env:
+      ANTHROPIC_API_KEY: $(ANTHROPIC_API_KEY)
+      AZURE_DEVOPS_PAT: $(AZURE_DEVOPS_PAT)
+      GH_TOKEN: $(AZURE_DEVOPS_PAT)  # Use same PAT for git operations
+
+  # 7. Publish result as pipeline artifact
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Fixi result"
+    condition: always()
+    inputs:
+      PathtoPublish: "$(Build.ArtifactStagingDirectory)/fixi-result.json"
+      ArtifactName: "fixi-result"

@@ -1,0 +1,133 @@
+# Fixi Agent — Example GitHub Actions Workflow
+#
+# This workflow demonstrates how to invoke Fixi as a CI/CD step.
+# Copy this to your repo's .github/workflows/ and configure secrets.
+#
+# Trigger: manual (workflow_dispatch) with work item URL and repo URL.
+# Can also be triggered by labels, comments, or webhooks.
+#
+# Prerequisites:
+#   - ANTHROPIC_API_KEY secret configured in repo settings
+#   - GH_TOKEN: automatically available via secrets.GITHUB_TOKEN
+#   - Python 3.11+ (installed in the runner)
+#   - Claude Code CLI (installed by this workflow)
+
+name: "Fixi: Resolve Issue"
+
+on:
+  workflow_dispatch:
+    inputs:
+      work_item_url:
+        description: >
+          Work item URL or file path (GitHub Issue, Azure DevOps Work Item,
+          Jira, Linear, or local markdown file in the repo).
+        required: true
+        type: string
+      repo_url:
+        description: >
+          Target repo URL to clone and fix. If blank, uses the current repo.
+        required: false
+        type: string
+        default: ""
+      tracking_mode:
+        description: "Tracking mode: none (default), client, or hq"
+        required: false
+        type: choice
+        options:
+          - none
+          - client
+          - hq
+        default: none
+
+jobs:
+  resolve:
+    name: "Resolve issue with Fixi"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Grant write access so Fixi can push branches and create PRs
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # 1. Checkout the Fixi agent code (includes skill/ and agent/)
+      - name: Checkout Fixi
+        uses: actions/checkout@v4
+        with:
+          repository: lotsofcontext/fixi
+          path: fixi
+
+      # 2. Setup Python
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Install Claude Code CLI (the SDK wraps it)
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+
+      # 4. Install Fixi agent
+      - name: Install Fixi agent
+        run: |
+          cd fixi/agent
+          pip install -e .
+          fixi --version
+          fixi check
+
+      # 5. Determine target repo
+      - name: Set target repo
+        id: target
+        run: |
+          if [ -n "${{ inputs.repo_url }}" ]; then
+            echo "repo_flag=--repo ${{ inputs.repo_url }}" >> $GITHUB_OUTPUT
+          else
+            echo "repo_flag=" >> $GITHUB_OUTPUT
+          fi
+
+      # 6. Run Fixi!
+      - name: Resolve issue
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          fixi resolve \
+            --work-item "${{ inputs.work_item_url }}" \
+            ${{ steps.target.outputs.repo_flag }} \
+            --tracking-mode "${{ inputs.tracking_mode }}" \
+            --skill-dir fixi/skill \
+            --output json \
+            --verbose \
+            | tee fixi-result.json
+
+      # 7. Upload result as artifact
+      - name: Upload result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixi-result
+          path: fixi-result.json
+
+      # 8. Comment on PR with result (if PR was created)
+      - name: Extract PR URL
+        if: success()
+        id: pr
+        run: |
+          PR_URL=$(jq -r '.pr_url // empty' fixi-result.json)
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Fixi Result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f fixi-result.json ]; then
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat fixi-result.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No result file found." >> $GITHUB_STEP_SUMMARY
+          fi

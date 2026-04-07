@@ -3,7 +3,7 @@ id: S2-T17
 title: Azure Pipelines workflow de ejemplo
 sprint: S2
 day: 3
-status: pending
+status: done
 priority: P0
 type: implementation
 tags: [agent, ci-cd, azure-devops, day-3]

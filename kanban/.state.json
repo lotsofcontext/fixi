@@ -199,13 +199,13 @@
   },
   "S2-T16": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "GitHub Actions workflow de ejemplo",
     "updated": "2026-04-07T04:30:00"
   },
   "S2-T17": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Azure Pipelines workflow de ejemplo",
     "updated": "2026-04-07T04:30:00"
   },

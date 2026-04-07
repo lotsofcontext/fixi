@@ -3,7 +3,7 @@ id: S2-T16
 title: GitHub Actions workflow de ejemplo
 sprint: S2
 day: 3
-status: pending
+status: done
 priority: P0
 type: implementation
 tags: [agent, ci-cd, github-actions, day-3]

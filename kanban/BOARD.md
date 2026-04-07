@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 19:08:58
+> **Última actualización**: 2026-04-07 19:10:20
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 7 | 30 | 1 | **81%** |
+| **38** | 0 | 0 | 5 | 32 | 1 | **86%** |
 
-_Progress = done / (total − cancelled) = 30/37_
+_Progress = done / (total − cancelled) = 32/37_
 
 ```
-████████████████████████░░░░░░ 81%
+█████████████████████████░░░░░ 86%
 ```
 
 ## Por Sprint
@@ -21,21 +21,19 @@ _Progress = done / (total − cancelled) = 30/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 13 | 0 | 7 | 0 | 0 | **65%** |
+| **S2** | 20 | 15 | 0 | 5 | 0 | 0 | **75%** |
 
-## 📋 Pending (7)
+## 📋 Pending (5)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
 | [[S2-T14]] | Dockerfile multi-stage (Node + Claude Code + Python + fixi) | S2 | D3 | P1 | 1h30m |
 | [[S2-T15]] | docker-compose.yml para dev local | S2 | D3 | P2 | 30m |
-| [[S2-T16]] | GitHub Actions workflow de ejemplo | S2 | D3 | P0 | 45m |
-| [[S2-T17]] | Azure Pipelines workflow de ejemplo | S2 | D3 | P0 | 45m |
 | [[S2-T18]] | Rehearsal end-to-end del agent CLI vs WI-101/102/103 | S2 | D4 | P0 | 2h |
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (30)
+## ✅ Done (32)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -69,6 +67,8 @@ _Progress = done / (total − cancelled) = 30/37_
 | [[S2-T11]] | Implementar output.py (JSON + human formatters) | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T12]] | Wire CLI → orchestrator → output end-to-end | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T13]] | Tests unitarios — parser, hooks, prompts | S2 | 1h30m |  | 2026-04-07T04:30:00 |
+| [[S2-T16]] | GitHub Actions workflow de ejemplo | S2 | 45m |  | 2026-04-07T04:30:00 |
+| [[S2-T17]] | Azure Pipelines workflow de ejemplo | S2 | 45m |  | 2026-04-07T04:30:00 |
 
 ## 🚫 Cancelled (1)
 
