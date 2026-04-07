@@ -145,9 +145,9 @@
   },
   "S2-T07": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Smoke test — orchestrator resuelve WI-101 sin hooks",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T08:00:00"
   },
   "S2-T08": {
     "sprint": "S2",

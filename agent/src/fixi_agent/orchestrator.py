@@ -12,6 +12,7 @@ Usage:
 from __future__ import annotations
 
 import re
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -113,29 +114,40 @@ class FixiOrchestrator:
             external_id=work_item.external_id,
         )
 
-        # 2. Load system prompt
+        # 2. Load system prompt → write to temp file (avoids Windows
+        #    command-line length limit of ~32K chars; our prompt is ~35K).
         log.info("orchestrator.load_prompt", tracking_mode=self.tracking_mode)
-        system_prompt = load_system_prompt(
+        system_prompt_text = load_system_prompt(
             skill_dir=self.skill_dir,
             tracking_mode=self.tracking_mode,
         )
+        prompt_file = Path(tempfile.mktemp(suffix=".md", prefix="fixi-prompt-"))
+        prompt_file.write_text(system_prompt_text, encoding="utf-8")
+        log.info("orchestrator.prompt_written", path=str(prompt_file), chars=len(system_prompt_text))
 
-        # 3. Determine repo path (clone or use local)
-        if self.repo_path:
-            return await self._run_in_dir(self.repo_path, work_item, system_prompt, start)
+        try:
+            # system_prompt as file reference (TypedDict)
+            system_prompt_ref: dict[str, str] = {"type": "file", "path": str(prompt_file)}
 
-        if self.repo_url:
-            with clone_repo(self.repo_url, branch=self.branch) as cloned_path:
-                return await self._run_in_dir(cloned_path, work_item, system_prompt, start)
+            # 3. Determine repo path (clone or use local)
+            if self.repo_path:
+                return await self._run_in_dir(self.repo_path, work_item, system_prompt_ref, start)
 
-        # No repo specified — use current working directory
-        return await self._run_in_dir(Path.cwd(), work_item, system_prompt, start)
+            if self.repo_url:
+                with clone_repo(self.repo_url, branch=self.branch) as cloned_path:
+                    return await self._run_in_dir(cloned_path, work_item, system_prompt_ref, start)
+
+            # No repo specified — use current working directory
+            return await self._run_in_dir(Path.cwd(), work_item, system_prompt_ref, start)
+        finally:
+            # Clean up temp prompt file
+            prompt_file.unlink(missing_ok=True)
 
     async def _run_in_dir(
         self,
         repo_path: Path,
         work_item: WorkItem,
-        system_prompt: str,
+        system_prompt: dict[str, str],
         start: float,
     ) -> RunResult:
         """Run the agent inside the given repo directory."""
@@ -169,7 +181,9 @@ class FixiOrchestrator:
                     for block in message.content:
                         if hasattr(block, "text"):
                             agent_output_parts.append(block.text)
-                            log.debug("orchestrator.assistant_text", text=block.text[:200])
+                            # Sanitize for Windows cp1252 console logging
+                            safe_text = block.text[:200].encode("ascii", "replace").decode("ascii")
+                            log.debug("orchestrator.assistant_text", text=safe_text)
                         elif hasattr(block, "name"):
                             log.debug("orchestrator.tool_use", tool=block.name)
 

@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 15:49:49
+> **Última actualización**: 2026-04-07 17:56:20
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 14 | 23 | 1 | **62%** |
+| **38** | 0 | 0 | 13 | 24 | 1 | **65%** |
 
-_Progress = done / (total − cancelled) = 23/37_
+_Progress = done / (total − cancelled) = 24/37_
 
 ```
-██████████████████░░░░░░░░░░░░ 62%
+███████████████████░░░░░░░░░░░ 65%
 ```
 
 ## Por Sprint
@@ -21,13 +21,12 @@ _Progress = done / (total − cancelled) = 23/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 6 | 0 | 14 | 0 | 0 | **30%** |
+| **S2** | 20 | 7 | 0 | 13 | 0 | 0 | **35%** |
 
-## 📋 Pending (14)
+## 📋 Pending (13)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T07]] | Smoke test — orchestrator resuelve WI-101 sin hooks | S2 | D1 | P0 | 30m |
 | [[S2-T08]] | Implementar 13 guardrails como PreToolUse hooks | S2 | D2 | P0 | 2h |
 | [[S2-T09]] | Implementar audit log (PostToolUse hook → JSONL) | S2 | D2 | P1 | 30m |
 | [[S2-T10]] | Implementar cli.py (click) — fixi resolve | S2 | D2 | P0 | 45m |
@@ -42,7 +41,7 @@ _Progress = done / (total − cancelled) = 23/37_
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (23)
+## ✅ Done (24)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -69,6 +68,7 @@ _Progress = done / (total − cancelled) = 23/37_
 | [[S2-T04]] | Implementar parser.py (work item URL → estructura) | S2 | 1h | 30m | 2026-04-07T07:00:00 |
 | [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | 45m | 15m | 2026-04-07T07:15:00 |
 | [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | 1h |  | 2026-04-07T07:15:00 |
+| [[S2-T07]] | Smoke test — orchestrator resuelve WI-101 sin hooks | S2 | 30m | 45m | 2026-04-07T08:00:00 |
 
 ## 🚫 Cancelled (1)
 

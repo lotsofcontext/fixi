@@ -3,14 +3,14 @@ id: S2-T07
 title: Smoke test — orchestrator resuelve WI-101 sin hooks
 sprint: S2
 day: 1
-status: pending
+status: done
 priority: P0
 type: test
 tags: [agent, python, smoke-test, day-1]
 created: 2026-04-07T04:30:00
-updated: 2026-04-07T04:30:00
+updated: 2026-04-07T08:00:00
 estimated: 30m
-actual: ""
+actual: 45m
 owner: claude
 blocks: [S2-T08]
 blocked_by: [S2-T06]
