@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 12:43:36
+> **Última actualización**: 2026-04-07 13:17:43
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -27,7 +27,7 @@ _Progress = done / (total − cancelled) = 19/37_
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T03]] | Implementar prompts.py (loader de SKILL.md) | S2 | D1 | P0 | 30m |
+| [[S2-T03]] | Implementar prompts.py (loader de SKILL.md) | S2 | D1 | P0 | 1h |
 | [[S2-T04]] | Implementar parser.py (work item URL → estructura) | S2 | D1 | P1 | 1h |
 | [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | D1 | P1 | 45m |
 | [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | D1 | P0 | 1h |
