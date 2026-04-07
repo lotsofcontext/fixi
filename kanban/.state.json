@@ -97,9 +97,9 @@
   },
   "S1-T17": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "done",
     "title": "Polish CLIENT-FACING.md con links a runs y Terraform",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T03:30:00"
   },
   "S1-T18": {
     "sprint": "S1",

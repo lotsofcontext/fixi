@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 01:08:26
+> **Última actualización**: 2026-04-07 01:12:05
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,27 +8,26 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | Progress |
 |-------|----------------|------------|-------------|---------|----------|
-| **18** | 0 | 0 | 3 | 15 | **83%** |
+| **18** | 0 | 0 | 2 | 16 | **89%** |
 
 ```
-████████████████████████░░░░░░ 83%
+██████████████████████████░░░░ 89%
 ```
 
 ## Por Sprint
 
 | Sprint | Total | Done | In Progress | Pending | Blocked |
 |--------|-------|------|-------------|---------|---------|
-| **S1** | 18 | 15 | 0 | 3 | 0 |
+| **S1** | 18 | 16 | 0 | 2 | 0 |
 
-## 📋 Pending (3)
+## 📋 Pending (2)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
 | [[S1-T12]] | Rehearsal Fixi contra WI-101 → run-01-github.md | S1 | D2 | P1 | 1h30m |
 | [[S1-T15]] | Rehearsal Fixi contra WI-102 y WI-103 (path Azure DevOps) | S1 | D4 | P1 | 2h |
-| [[S1-T17]] | Polish CLIENT-FACING.md con links a runs y Terraform | S1 | D5 | P1 | 1h |
 
-## ✅ Done (15)
+## ✅ Done (16)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -46,5 +45,6 @@
 | [[S1-T13]] | Agregar parser Azure DevOps Work Items al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T14]] | Agregar Azure Repos PR creation al SKILL.md | S1 | 45m | 25m | 2026-04-07T02:30:00 |
 | [[S1-T16]] | Terraform skeleton en fixi/terraform/ | S1 | 2h | 1h35m | 2026-04-07T02:35:00 |
+| [[S1-T17]] | Polish CLIENT-FACING.md con links a runs y Terraform | S1 | 1h | 30m | 2026-04-07T03:30:00 |
 | [[S1-T18]] | Actualizar descripción + topics del repo lotsofcontext/fixi en GitHub | S1 | 15m | 5m | 2026-04-07T00:00:00 |
 

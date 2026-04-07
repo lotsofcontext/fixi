@@ -1,7 +1,11 @@
 # Fixi — Agente Autónomo de Resolución de Tickets
 
-> Documento para circulación interna.
-> Versión: 1.0 | Fecha: 2026-04-06
+> Documento para circulación interna en GlobalMVM.
+> Versión: 2.0 | Fecha: 2026-04-07
+>
+> **Repos públicos**:
+> - Skill: [github.com/lotsofcontext/fixi](https://github.com/lotsofcontext/fixi)
+> - Demo cloneable: [github.com/lotsofcontext/fixi-demo-dotnet](https://github.com/lotsofcontext/fixi-demo-dotnet)
 
 ---
 
@@ -122,46 +126,86 @@ Fixi es **agnóstico a la tecnología**. Funciona con cualquier proyecto que ten
 
 ## Cómo se ve en la práctica
 
-### Ejemplo: Bug report en Azure DevOps
+Para que GlobalMVM pueda probar Fixi sin pre-requisitos, construimos un repo de demo cloneable:
 
-**Input**: Work Item #4521 — "La exportación CSV del dashboard de ventas falla con timeout cuando hay más de 10,000 registros"
+> **`lotsofcontext/fixi-demo-dotnet`** — un Web API ASP.NET Core 9 para lectura de medidores de energía. Contiene **3 defectos sembrados a propósito**, uno por cada clasificación crítica de Fixi:
 
-**Fixi ejecuta**:
+| # | Tipo | Work Item | Donde vive el bug | Test que falla |
+|---|------|-----------|-------------------|----------------|
+| 1 | `bug` | [WI-101](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-101-bug-lectura-negativa.md) | `Domain/Services/CalculadoraConsumo.cs` (`DivideByZeroException` cuando dos lecturas son del mismo día) | `CalculadoraConsumoTests.Calcular_DosLecturasMismoDia_NoDebeLanzarExcepcion` |
+| 2 | `performance` | [WI-102](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-102-perf-listado-medidores.md) | `Infrastructure/Services/MedidorService.cs` (N+1 query, 51 SQL calls para 50 medidores) | `MedidoresEndpointTests.Listar_LatenciaP95_DebeSerMenorA500ms` |
+| 3 | `security` | [WI-103](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-103-security-endpoint-admin.md) | `Api/Controllers/AdminController.cs` (sin `[Authorize]`, OWASP A01 Broken Access Control) | `AdminEndpointSecurityTests.ResetearLecturas_*` |
+
+El dominio (lectura de medidores) matchea el sector real de GlobalMVM: clientes como **EPM, ISAGEN, XM y Veolia** aparecen en los work items con casos de uso plausibles (técnico de campo registrando lectura post-tormenta, profiling de Joaris en QA, security review de Jefferson con OWASP ZAP).
+
+### Cómo lo pueden probar hoy
+
+```bash
+# 1. Clonar el demo
+git clone https://github.com/lotsofcontext/fixi-demo-dotnet
+cd fixi-demo-dotnet
+
+# 2. Verificar que arranca y los tests fallan como esperamos
+dotnet restore
+dotnet build
+dotnet test
+# Expected: Failed: 5, Passed: 3, Total: 8 (los 5 rojos son los bugs sembrados)
+
+# 3. En una sesión de Claude Code, invocar Fixi contra cada work item
+#    /fix-issue docs/issues/WI-101-bug-lectura-negativa.md
+#    /fix-issue docs/issues/WI-102-perf-listado-medidores.md
+#    /fix-issue docs/issues/WI-103-security-endpoint-admin.md
+```
+
+### Lo que Fixi ejecuta (ejemplo: WI-101)
 
 ```
 CONTEXTO VERIFICADO
-  Repo: dev.azure.com/globalmvm/ventas-dashboard
-  Branch: main
+  Repo: github.com/lotsofcontext/fixi-demo-dotnet
+  Branch: master
   Working tree: limpio
+  Cliente: GlobalMVM (sandbox demo)
 
 CLASIFICACIÓN:
-  Tipo: performance
-  Branch prefix: perf/
+  Tipo: bug
+  Branch prefix: fix/
+  Commit prefix: fix:
   Confianza: ALTA
-  Razón: Keywords "timeout" + "10,000 registros" = performance
+  Razón: Keywords "DivideByZero", "exception", "500" + stack trace en issue body
 
 ROOT CAUSE ANALYSIS:
-  Causa raíz: Query sin paginación en ExportService.cs:47
-  carga todos los registros en memoria antes de generar CSV
+  Causa raíz: CalculadoraConsumo.Calcular usa (delta).Days que es 0
+  cuando dos lecturas son del mismo día → división por cero.
 
   Archivos a modificar:
-    1. src/Services/ExportService.cs:47-62 — agregar streaming
-    2. src/Services/ExportService.cs:89 — buffer de escritura
+    1. src/GMVM.EnergyTracker.Domain/Services/CalculadoraConsumo.cs:17-23
+       — agregar guard clause para casos sub-diarios
+
   Riesgo: LOW
+  Tests existentes: 2 fallan (capturan el bug, pasan después del fix)
 
-BRANCH CREADO: perf/ADO-4521-timeout-csv-export
+BRANCH CREADO: fix/WI-101-consumo-negativo-mismo-dia
 
-TESTS: PASS (14 passed, 0 failed)
+TESTS: PASS (5 passed, 3 failed → 7 passed, 1 failed)
+       — bug fix dejó solo los 3 fails de WI-102 y WI-103
 
-PR CREADO: https://dev.azure.com/globalmvm/ventas-dashboard/_git/ventas-dashboard/pullrequest/892
-  Título: perf: fix CSV export timeout for large datasets
-  Base: main <- perf/ADO-4521-timeout-csv-export
-  Archivos: 1 modificado
+PR CREADO: https://github.com/lotsofcontext/fixi-demo-dotnet/pull/1
+  Título: fix: handle same-day readings in CalculadoraConsumo
+  Base: master ← fix/WI-101-consumo-negativo-mismo-dia
+  Archivos: 1 modificado, +5/-2 líneas
 
 FIX COMPLETE
 ```
 
-**Tiempo total**: ~3 minutos (automático) + ~10 minutos (revisión humana del PR)
+**Tiempo total**: ~3 minutos (automático) + ~5-10 minutos (revisión humana del PR).
+
+> ⏳ Las transcripciones reales y los screenshots de los PRs creados durante los rehearsals end-to-end estarán enlazados aquí en cuanto estén disponibles: `docs/demos/run-01-github.md` y `docs/demos/run-02-ado.md`.
+
+### El caso especial: WI-103 (security)
+
+Cuando Fixi clasifica un issue como `security`, **automáticamente fuerza modo GUIDED**, sin importar el nivel de autonomía elegido. Esto significa que pide aprobación humana en cada paso. Es uno de los **13 guardrails** que protege contra cambios automáticos en código de seguridad sin supervisión.
+
+Esto responde directamente a la preocupación sobre adopción y resistencia de devs: Fixi sabe **cuándo parar y pedir permiso**, no es un agente autónomo ciego.
 
 ---
 
@@ -190,64 +234,103 @@ FIX COMPLETE
 │  Autonomía: GUIDED │ CONFIRM_PLAN │ FULL_AUTO           │
 └─────────────────────────────┬───────────────────────────┘
                               │
-         ┌────────────────────┼────────────────────┐
-         ▼                    ▼                    ▼
-┌──────────────┐  ┌──────────────────┐  ┌─────────────────┐
-│  Azure Repos  │  │    Tracking      │  │  Public /status  │
-│  GitHub       │  │  (auditoría)     │  │  /verify/:id     │
-└──────────────┘  └──────────────────┘  └─────────────────┘
+         ┌────────────────────┴────────────────────┐
+         ▼                                         ▼
+┌──────────────────────┐              ┌──────────────────────┐
+│  Azure Repos / GitHub │              │  Tracking            │
+│  PRs para revisión    │              │  ACTIVO.md +         │
+│  humana               │              │  Mission Control     │
+└──────────────────────┘              └──────────────────────┘
 ```
 
 ---
 
 ## Infraestructura y Despliegue
 
-Fixi se despliega como **infraestructura-como-código** (Terraform), lo cual permite:
+Fixi se despliega como **infraestructura-como-código** (Terraform). El skeleton completo está en [`terraform/`](../terraform/) — 25 archivos, 5 módulos, ~1,955 líneas de HCL + Markdown, validado con `terraform validate` y `terraform fmt`.
+
+> 📁 [`terraform/README.md`](../terraform/README.md) tiene la guía completa: arquitectura, prerequisites, setup en 6 pasos (incluyendo el bootstrap de secrets), tabla de variables, tabla de outputs, estimación de costo (~$25-30/mes dev, $150-250/mes prod), security notes, disclaimer.
+
+**Beneficios para GlobalMVM**:
 
 - **Reproducibilidad**: el mismo `terraform apply` en cualquier suscripción Azure
-- **Auditoría**: toda la infraestructura es versionada en Git
-- **Escalabilidad**: ajustar recursos sin intervención manual
+- **Auditoría**: toda la infraestructura es versionada en Git, sin ClickOps
+- **Escalabilidad**: ajustar SKUs y recursos sin intervención manual
 - **Aislamiento**: cada equipo o proyecto puede tener su propia instancia
 
-### Componentes Azure
+### Componentes Azure (módulos Terraform)
 
-| Componente | Servicio Azure | Propósito |
-|-----------|---------------|-----------|
-| Agente Fixi | Azure Container Instances | Ejecución del agente |
-| Registro de imágenes | Azure Container Registry | Versionado de containers |
-| Configuración | Azure Key Vault | Secrets y tokens |
-| Monitoreo | Azure Monitor | Logs y alertas |
-| Red | Virtual Network | Aislamiento de red |
+| Componente | Servicio Azure | Módulo Terraform | Propósito |
+|-----------|---------------|------------------|-----------|
+| Agente Fixi | Azure Container Instances | [`modules/container_instance`](../terraform/modules/container_instance/) | Ejecución del agente como container long-running |
+| Registro de imágenes | Azure Container Registry | [`modules/container_registry`](../terraform/modules/container_registry/) | Versionado de la imagen de Fixi |
+| Secrets | Azure Key Vault (RBAC mode) | [`modules/key_vault`](../terraform/modules/key_vault/) | PATs de Azure DevOps, GitHub, API key de Anthropic |
+| Identidad | User-Assigned Managed Identity | [`modules/managed_identity`](../terraform/modules/managed_identity/) | Pull desde ACR + lectura de secrets de KV |
+| Red | Virtual Network + NSG deny-all inbound | [`modules/networking`](../terraform/modules/networking/) | Aislamiento, sin ingreso público |
+| Logs | Log Analytics Workspace | (en root `main.tf`) | Diagnostics del container |
+
+### Decisiones de seguridad clave
+
+- **Cero secrets hardcoded** en HCL ni en tfvars committeados
+- **Key Vault en modo RBAC** (no access policies), integra con PIM
+- **Soft-delete + purge protection** en KV
+- **NSG deny-all inbound** explícito (Fixi no expone HTTP, recibe trabajo via queue/CLI)
+- **ACR admin disabled**, solo Managed Identity con `AcrPull`
+- **`secret_references` output marcado `sensitive = true`**
+- **`.gitignore`** bloquea state files y root-level tfvars
+
+> Estas decisiones están documentadas en comentarios del código Terraform para que el equipo de seguridad de GlobalMVM las pueda revisar línea por línea.
 
 ---
 
-## Integraciones Avanzadas
+## Integración con Azure DevOps
 
-### MCP Server (Machine Communication Protocol)
+GlobalMVM corre 99% sobre Azure. Fixi soporta el flujo nativo de Azure DevOps:
 
-Fixi se expone como un servicio que otros agentes y herramientas pueden llamar programáticamente:
+### Lectura de Work Items
+- **Pattern URL**: `dev.azure.com/{org}/{project}/_workitems/edit/{id}`
+- **Shorthand**: `ADO-{id}`, `WI-{id}`, `AB#{id}`
+- **Comando**: `az boards work-item show --id {id} --output json`
+- **Field mapping**: `System.Title` → título, `System.Description` → body (HTML), `System.Tags` → labels, `Microsoft.VSTS.Common.Priority` → prioridad, `System.WorkItemType` → hint de clasificación
+- **Fallback**: WebFetch si `az` no autenticado, input manual si todo falla
 
-- Otros agentes de IA pueden enviar tickets a Fixi
-- Herramientas de CI/CD pueden triggerar análisis automáticos
-- Dashboards pueden consultar estado y métricas
+### Creación de Pull Requests
+- **Auto-detección** del remote: si matchea `dev.azure.com` o `visualstudio.com` → usa `az repos pr create`
+- **PR template idéntico** al de GitHub (Issue / Clasificación / Causa Raíz / Cambios / Testing)
+- **Linkeo automático** PR ↔ Work Item: `az repos pr work-item add --id {pr_id} --work-items {wi_id}`
+- **Si el remote no es Azure**: cae a `gh pr create` automáticamente
 
-### Verificación Pública
+### Azure Pipelines
+- Detección automática de `azure-pipelines.yml`
+- Verifica que el pipeline corre post-push
+- Documenta resultado en comments del PR
 
-Cada fix ejecutado por Fixi es **públicamente verificable**:
+> El skill completo (10 pasos, 656 líneas) está en [`skill/SKILL.md`](../skill/SKILL.md). Las 13 reglas de seguridad están en [`skill/references/guardrails.md`](../skill/references/guardrails.md). La taxonomía de los 7 tipos está en [`skill/references/classification.md`](../skill/references/classification.md).
 
-- **`/status`** — Estado del agente, versión, capabilities, métricas
-- **`/verify/:fix_id`** — Evidencia completa: PR, commits, tests, tracking
+---
 
-Esto permite auditoría externa y transparencia total sobre las acciones del agente.
+## Documentación adicional
+
+| Documento | Para qué sirve |
+|-----------|---------------|
+| [README](../README.md) | Overview técnico del proyecto |
+| [diagrams.md](diagrams.md) | 5 diagramas Mermaid: flujo principal, clasificación, autonomía, tracking, arquitectura de integración |
+| [PLAN.md](PLAN.md) | Roadmap completo: 6 fases, 46 tareas (incluye Azure DevOps, Terraform IaC, MCP Server, demo público, self-dogfooding) |
+| [SPEC.md](SPEC.md) | Especificación técnica completa |
+| [SKILL.md](../skill/SKILL.md) | Workflow operacional de Fixi (10 pasos) |
+| [terraform/README.md](../terraform/README.md) | Guía de despliegue en Azure |
 
 ---
 
 ## Próximos Pasos
 
-1. **Demo técnico** — Ejecución en vivo de Fixi contra un repositorio de ejemplo con issues pre-creados
-2. **Caso de uso real** — GlobalMVM provee "el chicharrón" (caso concreto) para validar contra su stack
-3. **Reunión de aclaración** — Revisión técnica de resultados y ajuste de configuración
-4. **Piloto** — Implementación en un proyecto real con un equipo acotado
+1. ✅ **Repo cloneable entregado** — `lotsofcontext/fixi` + `lotsofcontext/fixi-demo-dotnet`, ambos públicos
+2. ✅ **Terraform analizable entregado** — 25 archivos en `terraform/`, validado, documentado
+3. ⏳ **Rehearsal end-to-end documentado** — pendiente: ejecución real de Fixi contra los 3 work items con transcripts en `docs/demos/`
+4. ⏳ **GlobalMVM revisa los repos** — feedback técnico, preguntas, refinamientos
+5. ⏳ **Caso de uso real ("el chicharrón")** — GlobalMVM provee un caso concreto de uno de sus proyectos para validar contra su stack real
+6. ⏳ **Reunión de aclaración** — revisión técnica conjunta
+7. ⏳ **Piloto acotado** — implementación en un proyecto real con un equipo pequeño
 
 ---
 
@@ -257,4 +340,4 @@ Para preguntas técnicas o coordinación del piloto, contactar directamente al e
 
 ---
 
-*Este documento describe las capacidades actuales y planeadas de Fixi. Algunas funcionalidades están en desarrollo activo.*
+*Este documento describe las capacidades actuales y planeadas de Fixi. La implementación está en desarrollo activo en branches públicos — el progreso se trackea en `kanban/BOARD.md` del repo principal.*
