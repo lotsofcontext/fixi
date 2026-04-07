@@ -49,9 +49,9 @@
   },
   "S1-T09": {
     "sprint": "S1",
-    "status": "in-progress",
+    "status": "done",
     "title": "Pre-crear 3 work items markdown en docs/issues/",
-    "updated": "2026-04-07T01:00:00"
+    "updated": "2026-04-07T02:30:00"
   },
   "S1-T10": {
     "sprint": "S1",
@@ -73,15 +73,15 @@
   },
   "S1-T13": {
     "sprint": "S1",
-    "status": "in-progress",
+    "status": "done",
     "title": "Agregar parser Azure DevOps Work Items al SKILL.md",
-    "updated": "2026-04-07T01:00:00"
+    "updated": "2026-04-07T02:30:00"
   },
   "S1-T14": {
     "sprint": "S1",
-    "status": "pending",
+    "status": "done",
     "title": "Agregar Azure Repos PR creation al SKILL.md",
-    "updated": "2026-04-07T00:00:00"
+    "updated": "2026-04-07T02:30:00"
   },
   "S1-T15": {
     "sprint": "S1",
