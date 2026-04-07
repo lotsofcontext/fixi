@@ -163,13 +163,13 @@
   },
   "S2-T10": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "in-progress",
     "title": "Implementar cli.py (click) — fixi resolve",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T08:00:00"
   },
   "S2-T11": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Implementar output.py (JSON + human formatters)",
     "updated": "2026-04-07T04:30:00"
   },

@@ -3,7 +3,7 @@ id: S2-T11
 title: Implementar output.py (JSON + human formatters)
 sprint: S2
 day: 2
-status: pending
+status: done
 priority: P1
 type: implementation
 tags: [agent, python, output, day-2]

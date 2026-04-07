@@ -3,12 +3,12 @@ id: S2-T10
 title: Implementar cli.py (click) — fixi resolve
 sprint: S2
 day: 2
-status: pending
+status: in-progress
 priority: P0
 type: implementation
 tags: [agent, python, cli, day-2]
 created: 2026-04-07T04:30:00
-updated: 2026-04-07T04:30:00
+updated: 2026-04-07T08:00:00
 estimated: 45m
 actual: ""
 owner: claude
