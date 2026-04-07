@@ -163,7 +163,7 @@
   },
   "S2-T10": {
     "sprint": "S2",
-    "status": "in-progress",
+    "status": "done",
     "title": "Implementar cli.py (click) — fixi resolve",
     "updated": "2026-04-07T08:00:00"
   },

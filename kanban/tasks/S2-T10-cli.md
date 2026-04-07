@@ -3,7 +3,7 @@ id: S2-T10
 title: Implementar cli.py (click) — fixi resolve
 sprint: S2
 day: 2
-status: in-progress
+status: done
 priority: P0
 type: implementation
 tags: [agent, python, cli, day-2]
