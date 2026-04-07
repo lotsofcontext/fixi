@@ -3,20 +3,22 @@ id: S2-T03
 title: Implementar prompts.py (loader de SKILL.md)
 sprint: S2
 day: 1
-status: pending
+status: done
 priority: P0
 type: implementation
 tags: [agent, python, prompts, day-1]
 created: 2026-04-07T04:30:00
-updated: 2026-04-07T04:30:00
+updated: 2026-04-07T06:30:00
 estimated: 1h
-actual: ""
+actual: 30m
 owner: claude
 blocks: [S2-T06]
 blocked_by: [S2-T01]
 related_docs: [SPRINT-2, SKILL]
 commits: []
-files_touched: []
+files_touched:
+  - agent/src/fixi_agent/prompts.py
+  - agent/tests/unit/test_prompts.py
 ---
 
 # S2-T03: Loader de system prompt desde SKILL.md
