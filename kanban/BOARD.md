@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 13:23:36
+> **Última actualización**: 2026-04-07 13:25:13
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 16 | 21 | 1 | **57%** |
+| **38** | 0 | 0 | 15 | 22 | 1 | **59%** |
 
-_Progress = done / (total − cancelled) = 21/37_
+_Progress = done / (total − cancelled) = 22/37_
 
 ```
-█████████████████░░░░░░░░░░░░░ 57%
+█████████████████░░░░░░░░░░░░░ 59%
 ```
 
 ## Por Sprint
@@ -21,13 +21,12 @@ _Progress = done / (total − cancelled) = 21/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 4 | 0 | 16 | 0 | 0 | **20%** |
+| **S2** | 20 | 5 | 0 | 15 | 0 | 0 | **25%** |
 
-## 📋 Pending (16)
+## 📋 Pending (15)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | D1 | P1 | 45m |
 | [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | D1 | P0 | 1h |
 | [[S2-T07]] | Smoke test — orchestrator resuelve WI-101 sin hooks | S2 | D1 | P0 | 30m |
 | [[S2-T08]] | Implementar 13 guardrails como PreToolUse hooks | S2 | D2 | P0 | 2h |
@@ -44,7 +43,7 @@ _Progress = done / (total − cancelled) = 21/37_
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (21)
+## ✅ Done (22)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -69,6 +68,7 @@ _Progress = done / (total − cancelled) = 21/37_
 | [[S2-T02]] | Instalar claude-agent-sdk + verificar import | S2 | 15m | 20m | 2026-04-07T05:50:00 |
 | [[S2-T03]] | Implementar prompts.py (loader de SKILL.md) | S2 | 1h | 30m | 2026-04-07T06:30:00 |
 | [[S2-T04]] | Implementar parser.py (work item URL → estructura) | S2 | 1h | 30m | 2026-04-07T07:00:00 |
+| [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | 45m | 15m | 2026-04-07T07:15:00 |
 
 ## 🚫 Cancelled (1)
 

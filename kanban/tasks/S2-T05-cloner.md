@@ -3,14 +3,14 @@ id: S2-T05
 title: Implementar cloner.py (git clone a tmpdir con auth)
 sprint: S2
 day: 1
-status: pending
+status: done
 priority: P1
 type: implementation
 tags: [agent, python, git, day-1]
 created: 2026-04-07T04:30:00
-updated: 2026-04-07T04:30:00
+updated: 2026-04-07T07:15:00
 estimated: 45m
-actual: ""
+actual: 15m
 owner: claude
 blocks: [S2-T06]
 blocked_by: [S2-T01]

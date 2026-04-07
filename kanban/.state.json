@@ -133,9 +133,9 @@
   },
   "S2-T05": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Implementar cloner.py (git clone a tmpdir con auth)",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T07:15:00"
   },
   "S2-T06": {
     "sprint": "S2",
