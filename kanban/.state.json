@@ -181,7 +181,7 @@
   },
   "S2-T13": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Tests unitarios — parser, hooks, prompts",
     "updated": "2026-04-07T04:30:00"
   },

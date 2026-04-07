@@ -3,7 +3,7 @@ id: S2-T13
 title: Tests unitarios — parser, hooks, prompts
 sprint: S2
 day: 2
-status: pending
+status: done
 priority: P1
 type: test
 tags: [agent, python, tests, day-2]
