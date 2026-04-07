@@ -3,7 +3,7 @@ id: S2-T09
 title: Implementar audit log (PostToolUse hook → JSONL)
 sprint: S2
 day: 2
-status: pending
+status: done
 priority: P1
 type: implementation
 tags: [agent, python, observability, day-2]

@@ -3,7 +3,7 @@ id: S2-T12
 title: Wire CLI → orchestrator → output end-to-end
 sprint: S2
 day: 2
-status: pending
+status: done
 priority: P0
 type: implementation
 tags: [agent, python, integration, day-2]

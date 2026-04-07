@@ -157,7 +157,7 @@
   },
   "S2-T09": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Implementar audit log (PostToolUse hook → JSONL)",
     "updated": "2026-04-07T04:30:00"
   },
@@ -175,7 +175,7 @@
   },
   "S2-T12": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Wire CLI → orchestrator → output end-to-end",
     "updated": "2026-04-07T04:30:00"
   },

@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 19:06:38
+> **Última actualización**: 2026-04-07 19:08:27
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 10 | 27 | 1 | **73%** |
+| **38** | 0 | 0 | 8 | 29 | 1 | **78%** |
 
-_Progress = done / (total − cancelled) = 27/37_
+_Progress = done / (total − cancelled) = 29/37_
 
 ```
-█████████████████████░░░░░░░░░ 73%
+███████████████████████░░░░░░░ 78%
 ```
 
 ## Por Sprint
@@ -21,14 +21,12 @@ _Progress = done / (total − cancelled) = 27/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 10 | 0 | 10 | 0 | 0 | **50%** |
+| **S2** | 20 | 12 | 0 | 8 | 0 | 0 | **60%** |
 
-## 📋 Pending (10)
+## 📋 Pending (8)
 
 | ID | Task | Sprint | Day | Priority | Estimated |
 |----|------|--------|-----|----------|-----------|
-| [[S2-T09]] | Implementar audit log (PostToolUse hook → JSONL) | S2 | D2 | P1 | 30m |
-| [[S2-T12]] | Wire CLI → orchestrator → output end-to-end | S2 | D2 | P0 | 30m |
 | [[S2-T13]] | Tests unitarios — parser, hooks, prompts | S2 | D2 | P1 | 1h30m |
 | [[S2-T14]] | Dockerfile multi-stage (Node + Claude Code + Python + fixi) | S2 | D3 | P1 | 1h30m |
 | [[S2-T15]] | docker-compose.yml para dev local | S2 | D3 | P2 | 30m |
@@ -38,7 +36,7 @@ _Progress = done / (total − cancelled) = 27/37_
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (27)
+## ✅ Done (29)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -67,8 +65,10 @@ _Progress = done / (total − cancelled) = 27/37_
 | [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | 1h |  | 2026-04-07T07:15:00 |
 | [[S2-T07]] | Smoke test — orchestrator resuelve WI-101 sin hooks | S2 | 30m | 45m | 2026-04-07T08:00:00 |
 | [[S2-T08]] | Implementar 13 guardrails como PreToolUse hooks | S2 | 2h |  | 2026-04-07T04:30:00 |
+| [[S2-T09]] | Implementar audit log (PostToolUse hook → JSONL) | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T10]] | Implementar cli.py (click) — fixi resolve | S2 | 45m |  | 2026-04-07T08:00:00 |
 | [[S2-T11]] | Implementar output.py (JSON + human formatters) | S2 | 30m |  | 2026-04-07T04:30:00 |
+| [[S2-T12]] | Wire CLI → orchestrator → output end-to-end | S2 | 30m |  | 2026-04-07T04:30:00 |
 
 ## 🚫 Cancelled (1)
 

@@ -46,11 +46,11 @@ EXIT_UNKNOWN = 5
 
 def _configure_logging(verbose: bool) -> None:
     """Configure structlog for CLI output."""
-    level = "DEBUG" if verbose else "INFO"
+    import logging
+
+    log_level = logging.DEBUG if verbose else logging.INFO
     structlog.configure(
-        wrapper_class=structlog.make_filtering_bound_logger(
-            structlog.get_level_from_name(level)
-        ),
+        wrapper_class=structlog.make_filtering_bound_logger(log_level),
         processors=[
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.dev.ConsoleRenderer(),
