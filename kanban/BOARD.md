@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 15:49:32
+> **Última actualización**: 2026-04-07 15:49:49
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 1 | 0 | 14 | 22 | 1 | **59%** |
+| **38** | 0 | 0 | 14 | 23 | 1 | **62%** |
 
-_Progress = done / (total − cancelled) = 22/37_
+_Progress = done / (total − cancelled) = 23/37_
 
 ```
-█████████████████░░░░░░░░░░░░░ 59%
+██████████████████░░░░░░░░░░░░ 62%
 ```
 
 ## Por Sprint
@@ -21,13 +21,7 @@ _Progress = done / (total − cancelled) = 22/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 5 | 1 | 14 | 0 | 0 | **25%** |
-
-## 🔄 In Progress (1)
-
-| ID | Task | Sprint | Day | Owner | Updated |
-|----|------|--------|-----|-------|---------|
-| [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | D1 | claude | 2026-04-07T07:15:00 |
+| **S2** | 20 | 6 | 0 | 14 | 0 | 0 | **30%** |
 
 ## 📋 Pending (14)
 
@@ -48,7 +42,7 @@ _Progress = done / (total − cancelled) = 22/37_
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | D4 | P0 | 1h |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | D4 | P1 | 30m |
 
-## ✅ Done (22)
+## ✅ Done (23)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -74,6 +68,7 @@ _Progress = done / (total − cancelled) = 22/37_
 | [[S2-T03]] | Implementar prompts.py (loader de SKILL.md) | S2 | 1h | 30m | 2026-04-07T06:30:00 |
 | [[S2-T04]] | Implementar parser.py (work item URL → estructura) | S2 | 1h | 30m | 2026-04-07T07:00:00 |
 | [[S2-T05]] | Implementar cloner.py (git clone a tmpdir con auth) | S2 | 45m | 15m | 2026-04-07T07:15:00 |
+| [[S2-T06]] | Implementar orchestrator.py (ClaudeSDKClient wrapper) | S2 | 1h |  | 2026-04-07T07:15:00 |
 
 ## 🚫 Cancelled (1)
 

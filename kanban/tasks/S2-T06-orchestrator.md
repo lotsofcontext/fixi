@@ -3,7 +3,7 @@ id: S2-T06
 title: Implementar orchestrator.py (ClaudeSDKClient wrapper)
 sprint: S2
 day: 1
-status: in-progress
+status: done
 priority: P0
 type: implementation
 tags: [agent, python, claude-sdk, day-1]
