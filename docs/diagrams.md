@@ -1,14 +1,14 @@
 # Diagramas — Fixi Agent
 
 > Diagramas Mermaid del flujo operacional de Fixi.
-> Ver también: [[SKILL|Workflow de 10 pasos]], [[classification|Taxonomía de clasificación]], [[guardrails|Reglas de seguridad]], [[PLAN|Roadmap]], [[SPEC|Especificación técnica]]
+> Ver también: [Workflow de 10 pasos](../skill/SKILL.md), [Taxonomía de clasificación](../skill/references/classification.md), [Reglas de seguridad](../skill/references/guardrails.md), [Roadmap](PLAN.md), [Especificación técnica](SPEC.md)
 
 ---
 
 ## 1. Flujo Principal: Issue → PR
 
 Ciclo completo de resolución de un ticket en 10 pasos.
-Ver detalle en [[SKILL]].
+Ver detalle en [skill/SKILL.md](../skill/SKILL.md).
 
 ```mermaid
 flowchart TD
@@ -147,7 +147,7 @@ flowchart TD
 ## 2. Árbol de Clasificación
 
 Lógica de decisión para determinar el tipo de issue.
-Ver detalle en [[classification|Taxonomía completa]].
+Ver detalle en [Taxonomía completa](../skill/references/classification.md).
 
 ```mermaid
 flowchart TD
@@ -195,7 +195,7 @@ flowchart TD
 ## 3. Niveles de Autonomía
 
 Cómo Fixi adapta su comportamiento según el nivel elegido.
-Ver detalle en [[SKILL#Paso 3|Paso 3 del workflow]].
+Ver detalle en [Paso 3 del workflow](../skill/SKILL.md).
 
 ```mermaid
 flowchart LR
@@ -235,7 +235,7 @@ flowchart LR
 ## 4. Flujo de Triple-Write (Tracking)
 
 Actualización obligatoria en 3 destinos después de cada fix.
-Ver detalle en [[SKILL#Paso 9|Paso 9 del workflow]], [[guardrails|Regla de tracking]].
+Ver detalle en [Paso 9 del workflow](../skill/SKILL.md), [Regla de tracking](../skill/references/guardrails.md).
 
 ```mermaid
 flowchart TD
@@ -293,7 +293,7 @@ flowchart TD
 ## 5. Arquitectura de Integración (Vista GlobalMVM)
 
 Cómo Fixi se conecta con diferentes fuentes y destinos.
-Ver también: [[PLAN#Fase 6|Fase 6 — Ecosistema]], [[BACKLOG|Backlog de desarrollo]]
+Ver también: [Fase 6 — Ecosistema](PLAN.md), [Backlog de desarrollo](planning/BACKLOG.md)
 
 ```mermaid
 flowchart TD
