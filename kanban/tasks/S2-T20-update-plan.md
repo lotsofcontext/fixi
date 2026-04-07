@@ -3,7 +3,7 @@ id: S2-T20
 title: Update PLAN.md — agent como Phase 6 central
 sprint: S2
 day: 4
-status: pending
+status: done
 priority: P1
 type: docs
 tags: [docs, plan, day-4]

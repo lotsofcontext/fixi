@@ -217,13 +217,13 @@
   },
   "S2-T19": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Update CLIENT-FACING.md — narrativa skill → agent",
     "updated": "2026-04-07T04:30:00"
   },
   "S2-T20": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Update PLAN.md — agent como Phase 6 central",
     "updated": "2026-04-07T04:30:00"
   }

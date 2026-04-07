@@ -4,7 +4,7 @@ title: Dockerfile multi-stage (Node + Claude Code + Python + fixi)
 sprint: S2
 day: 3
 status: pending
-priority: P1
+priority: P2
 type: implementation
 tags: [agent, docker, deployment, day-3]
 created: 2026-04-07T04:30:00

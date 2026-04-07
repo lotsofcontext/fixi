@@ -1,19 +1,23 @@
 # Fixi — Agente Autónomo de Resolución de Tickets
 
 > Documento para circulación interna en GlobalMVM.
-> Versión: 2.0 | Fecha: 2026-04-07
+> Versión: 3.0 | Fecha: 2026-04-07
 >
 > **Repos públicos**:
-> - Skill: [github.com/lotsofcontext/fixi](https://github.com/lotsofcontext/fixi)
-> - Demo cloneable: [github.com/lotsofcontext/fixi-demo-dotnet](https://github.com/lotsofcontext/fixi-demo-dotnet)
+> - Agent + Skill + Terraform: [github.com/lotsofcontext/fixi](https://github.com/lotsofcontext/fixi)
+> - Demo cloneable (.NET): [github.com/lotsofcontext/fixi-demo-dotnet](https://github.com/lotsofcontext/fixi-demo-dotnet)
 
 ---
 
 ## Qué es Fixi
 
-Fixi es un agente de software que **automatiza el ciclo completo de resolución de tickets**: desde que un desarrollador reporta un bug o solicita una mejora, hasta que un Pull Request verificado está listo para revisión humana.
+Fixi es un **agente CLI autónomo** que automatiza el ciclo completo de resolución de tickets — desde que un desarrollador reporta un bug o solicita una mejora, hasta que un Pull Request verificado está listo para revisión humana.
 
-No es un chatbot. No es un generador de código genérico. Es un **agente operacional** que entiende el contexto del proyecto, respeta las convenciones del equipo, y produce cambios auditables.
+Se instala como una herramienta de línea de comandos (`fixi resolve --work-item <url>`) y se integra directamente en **GitHub Actions** y **Azure DevOps Pipelines**. No requiere intervención humana durante la ejecución.
+
+Debajo, Fixi ejecuta un **workflow de 10 pasos** (documentado en [`skill/SKILL.md`](../skill/SKILL.md)) que define la lógica operacional del agente: cómo parsear tickets, clasificarlos, buscar la causa raíz, implementar el fix, correr validaciones, y crear el PR. Este workflow es inspeccionable y modificable — es texto plano, no código compilado.
+
+**El stack del agente**: Python + Claude Agent SDK (de Anthropic) + las herramientas de desarrollo que ya usan (git, dotnet/npm/maven, gh/az CLI). El agente NO requiere infraestructura adicional — corre en el runner de su pipeline existente.
 
 ---
 
@@ -66,6 +70,60 @@ Ticket → Clasificación → Análisis → Branch → Fix → Tests → PR → 
 - Ahorro promedio de 60 min por ticket = **30 horas/semana recuperadas**
 - Equivalente a **3.75 desarrolladores adicionales** de capacidad
 - El equipo de 10 produce como equipo de 13-14
+
+### Métricas reales del smoke test (2026-04-07)
+
+| Métrica | Valor |
+|---------|-------|
+| Tiempo del agente | **4.3 minutos** |
+| Costo por ticket | **$0.61 USD** |
+| Líneas de código del agente | ~925 LOC Python |
+| Tests del agente | 136 unit tests |
+| PR creado | [lotsofcontext/fixi-demo-dotnet#2](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/2) |
+
+---
+
+## Cómo ejecutar Fixi
+
+### Desde la línea de comandos
+
+```bash
+# Instalar (una sola vez)
+cd fixi/agent
+pip install -e .
+
+# Resolver un issue
+fixi resolve \
+  --work-item https://dev.azure.com/globalmvm/EnergySuite/_workitems/edit/4521 \
+  --repo https://dev.azure.com/globalmvm/EnergySuite/_git/energy-tracker
+```
+
+### Desde GitHub Actions
+
+Copiar [`agent/.github/workflows/example-fixi-resolve.yml`](../agent/.github/workflows/example-fixi-resolve.yml) al repositorio target. Configurar el secret `ANTHROPIC_API_KEY`. Ejecutar manualmente desde la pestaña Actions:
+
+```yaml
+# Trigger manual con inputs
+on:
+  workflow_dispatch:
+    inputs:
+      work_item_url:
+        description: "URL del work item"
+        required: true
+```
+
+### Desde Azure DevOps Pipelines
+
+Copiar [`agent/azure-pipelines/example-fixi-resolve.yml`](../agent/azure-pipelines/example-fixi-resolve.yml) al proyecto. Crear Variable Group `fixi-secrets` con `ANTHROPIC_API_KEY` y `AZURE_DEVOPS_PAT`:
+
+```yaml
+# Trigger manual con parámetros
+parameters:
+  - name: workItemUrl
+    type: string
+  - name: repoUrl
+    type: string
+```
 
 ---
 

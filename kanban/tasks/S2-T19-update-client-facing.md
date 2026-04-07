@@ -3,7 +3,7 @@ id: S2-T19
 title: Update CLIENT-FACING.md — narrativa skill → agent
 sprint: S2
 day: 4
-status: pending
+status: done
 priority: P0
 type: docs
 tags: [docs, client-facing, day-4]
