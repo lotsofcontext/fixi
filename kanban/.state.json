@@ -127,9 +127,9 @@
   },
   "S2-T04": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Implementar parser.py (work item URL → estructura)",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T07:00:00"
   },
   "S2-T05": {
     "sprint": "S2",

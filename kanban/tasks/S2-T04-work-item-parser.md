@@ -3,14 +3,14 @@ id: S2-T04
 title: Implementar parser.py (work item URL → estructura)
 sprint: S2
 day: 1
-status: pending
+status: done
 priority: P1
 type: implementation
 tags: [agent, python, parsing, day-1]
 created: 2026-04-07T04:30:00
-updated: 2026-04-07T04:30:00
+updated: 2026-04-07T07:00:00
 estimated: 1h
-actual: ""
+actual: 30m
 owner: claude
 blocks: [S2-T06]
 blocked_by: [S2-T01]
