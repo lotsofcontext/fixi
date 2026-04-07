@@ -1,5 +1,22 @@
 # Fixi — Autonomous Issue Resolution Agent
 
+## North Star Prompt (Jefferson Acevedo, GlobalMVM — reunión 2026-04-06)
+
+Este es el prompt literal que dio el ingeniero cliente. **Todo lo que construimos en Fixi debe poder cumplir esta descripción.** Si una decisión de diseño no puede trazarse de vuelta a este prompt, sobra. Si una capability que el prompt exige no está cubierta, es un gap que hay que cerrar.
+
+> Actúa como un agente de automatización de desarrollo de software encargado de gestionar tickets y requerimientos. Debes conectarte a fuentes de conocimiento disponibles como repositorios de código, sistemas de tickets y documentación técnica para analizar cada solicitud. Clasifica y prioriza el ticket según su tipo (bug, mejora, nueva funcionalidad), valida el código fuente existente relacionado, propone y aplica ajustes siguiendo buenas prácticas de desarrollo y estándares definidos, crea automáticamente una nueva rama con una nomenclatura adecuada, realiza los cambios necesarios en el código, ejecuta validaciones básicas, genera el commit con un mensaje claro y estructurado, y deja creado el Pull Request listo para aprobación incluyendo descripción técnica, cambios realizados y posibles impactos. No debes inventar información, si faltan datos debes indicarlo claramente y detener el flujo.
+
+**Capabilities no-negociables que el prompt exige:**
+1. Conectarse a **fuentes de conocimiento**: repos de código, sistemas de tickets, documentación técnica
+2. **Clasificar y priorizar** por tipo (bug / mejora / nueva funcionalidad)
+3. **Validar código fuente existente** relacionado al ticket antes de tocarlo
+4. **Proponer y aplicar** ajustes siguiendo buenas prácticas y estándares definidos
+5. **Crear rama** con nomenclatura adecuada (nunca tocar main)
+6. **Ejecutar validaciones básicas** (tests, lint, build)
+7. **Commit** con mensaje claro y estructurado (conventional commits)
+8. **Pull Request listo para aprobación** con descripción técnica, cambios realizados, posibles impactos
+9. **Halt-and-ask** cuando falten datos — jamás inventar información
+
 ## Project Context
 Fixi is a Claude Code skill that automates the full lifecycle of issue resolution: intake → classification → analysis → fix → PR → tracking.
 
