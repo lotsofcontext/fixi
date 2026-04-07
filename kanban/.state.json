@@ -109,9 +109,9 @@
   },
   "S2-T01": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Crear fixi/agent/ skeleton (pyproject.toml, src, tests, README)",
-    "updated": "2026-04-07T04:30:00"
+    "updated": "2026-04-07T05:15:00"
   },
   "S2-T02": {
     "sprint": "S2",
