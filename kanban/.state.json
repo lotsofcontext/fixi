@@ -1,0 +1,110 @@
+{
+  "S1-T01": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "Verificar contenido de classification.md y guardrails.md",
+    "updated": "2026-04-06T21:35:00"
+  },
+  "S1-T02": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "Audit wiki links — formato dual para client-facing vs internos",
+    "updated": "2026-04-06T21:50:00"
+  },
+  "S1-T03": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "Crear repo lotsofcontext/fixi-demo-dotnet en GitHub",
+    "updated": "2026-04-06T22:30:00"
+  },
+  "S1-T04": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "Skeleton GMVM.EnergyTracker (4 projects + config)",
+    "updated": "2026-04-06T22:55:00"
+  },
+  "S1-T05": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Sembrar BUG #1 — DivideByZero en CalculadoraConsumo",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T06": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Sembrar PERF #2 — N+1 en MedidorService.ListarConResumen",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T07": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Sembrar SECURITY #3 — AdminController sin [Authorize]",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T08": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Tests que fallan para los 3 bugs sembrados",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T09": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Pre-crear 3 work items markdown en docs/issues/",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T10": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "CLAUDE.md del demo repo (convenciones .NET)",
+    "updated": "2026-04-06T22:55:00"
+  },
+  "S1-T11": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "README bilingüe del demo repo",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T12": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Rehearsal Fixi contra WI-101 → run-01-github.md",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T13": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Agregar parser Azure DevOps Work Items al SKILL.md",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T14": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Agregar Azure Repos PR creation al SKILL.md",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T15": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Rehearsal Fixi contra WI-102 y WI-103 (path Azure DevOps)",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T16": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Terraform skeleton en fixi/terraform/",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T17": {
+    "sprint": "S1",
+    "status": "pending",
+    "title": "Polish CLIENT-FACING.md con links a runs y Terraform",
+    "updated": "2026-04-07T00:00:00"
+  },
+  "S1-T18": {
+    "sprint": "S1",
+    "status": "done",
+    "title": "Actualizar descripción + topics del repo lotsofcontext/fixi en GitHub",
+    "updated": "2026-04-07T00:00:00"
+  }
+}

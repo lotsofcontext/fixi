@@ -16,12 +16,18 @@ No external dependencies — Python stdlib only.
 
 from __future__ import annotations
 
+import io
 import json
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+# Force UTF-8 stdout on Windows so arrows and box-drawing chars work
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", line_buffering=True)
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", line_buffering=True)
 
 KANBAN_DIR = Path(__file__).parent
 TASKS_DIR = KANBAN_DIR / "tasks"
@@ -341,17 +347,9 @@ def main() -> int:
     prev_state = load_state()
     changes = detect_changes(tasks, prev_state)
 
-    if changes:
-        history_file = append_history(changes)
-        print(f"Detected {len(changes)} status change(s):")
-        for c in changes:
-            old = c["old"] or "new"
-            print(f"  {c['id']}: {old} → {c['new']}")
-        if history_file:
-            print(f"History appended to {history_file.relative_to(KANBAN_DIR.parent)}")
-    else:
-        print("No status changes since last run")
-
+    # IMPORTANT: save state BEFORE writing history.
+    # If we crash after history but before state, the next run would
+    # re-detect the same changes and append duplicate history entries.
     new_state = {
         tid: {
             "status": t["frontmatter"].get("status", "pending"),
@@ -362,6 +360,17 @@ def main() -> int:
         for tid, t in tasks.items()
     }
     save_state(new_state)
+
+    if changes:
+        history_file = append_history(changes)
+        print(f"Detected {len(changes)} status change(s):")
+        for c in changes:
+            old = c["old"] or "new"
+            print(f"  {c['id']}: {old} → {c['new']}")
+        if history_file:
+            print(f"History appended to {history_file.relative_to(KANBAN_DIR.parent)}")
+    else:
+        print("No status changes since last run")
 
     board_content = render_board(tasks)
     BOARD_FILE.write_text(board_content, encoding="utf-8")
