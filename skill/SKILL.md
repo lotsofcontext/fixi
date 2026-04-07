@@ -69,6 +69,24 @@ Detectar automaticamente el formato del input:
 - Extraer: `WebFetch` del URL
 - Si falla (auth wall): pedir al usuario que pegue el titulo + descripcion
 
+### Azure DevOps Work Item
+- Pattern: `dev\.azure\.com/[^/]+/[^/]+/_workitems/edit/\d+` (URL completo) y shorthand `ADO-\d+`, `WI-\d+`, o `AB#\d+`
+- Extraer (preferido): usar `az` CLI con la extension `azure-devops` instalada:
+  ```bash
+  az boards work-item show --id {id} --output json --organization https://dev.azure.com/{org}
+  ```
+- Mapeo de campos del JSON de ADO a la estructura normalizada:
+  - `fields["System.Title"]` -> `title`
+  - `fields["System.Description"]` -> `body` (OJO: este campo viene en HTML — strip tags o avisar al usuario)
+  - `fields["System.Tags"]` -> `labels` (string separado por `;`, splitear)
+  - `fields["Microsoft.VSTS.Common.Priority"]` -> `priority` (1=critica, 2=alta, 3=media, 4=baja)
+  - `fields["System.WorkItemType"]` -> influye en la clasificacion (Bug -> bug, User Story -> feature, Task -> chore, etc.)
+  - `id` -> `external_id` como `ADO-{id}` o `WI-{id}`
+  - URL original -> `source_url`
+- **Fallback 1**: si `az` CLI falla o no esta configurado (sin login, sin extension `azure-devops`), intentar `WebFetch` del URL — puede fallar por auth wall
+- **Fallback 2**: si `WebFetch` tambien falla, pedir al usuario que pegue el titulo + descripcion manualmente
+- `source_type` debe ser `azure-devops`
+
 ### Jira Ticket
 - Pattern: `atlassian\.net/browse/[A-Z]+-\d+` o `jira\..+/browse/[A-Z]+-\d+`
 - Extraer: `WebFetch` del URL
@@ -86,10 +104,10 @@ Todo input se normaliza a esta estructura interna:
 SOLICITUD:
   title: {titulo del issue}
   body: {descripcion completa}
-  external_id: {GH-42, LINEAR-ABC-123, JIRA-PROJ-789, FREE-20260406-slug}
+  external_id: {GH-42, LINEAR-ABC-123, ADO-456, JIRA-PROJ-789, FREE-20260406-slug}
   labels: [{lista de labels/tags}]
   priority: {critica/alta/media/baja/desconocida}
-  source_type: {github/linear/jira/free-text}
+  source_type: {github/linear/azure-devops/jira/free-text}
   source_url: {URL original o "N/A"}
 ```
 
@@ -319,14 +337,27 @@ TESTS: {PASS/FAIL/SKIP/NO_TESTS}
 
 ## Paso 8: Crear Pull Request
 
+### Detectar plataforma del remote
+```bash
+# Auto-detectar si el remote es Azure Repos o GitHub
+REMOTE_URL=$(git remote get-url origin)
+if echo "$REMOTE_URL" | grep -qE "dev\.azure\.com|visualstudio\.com"; then
+  IS_AZURE_REPOS=true
+else
+  IS_AZURE_REPOS=false
+fi
+```
+
 ### Push branch
 ```bash
 git push -u origin {branch_name}
 ```
 
-### Crear PR
-```bash
-gh pr create --title "{commit_prefix}: {titulo conciso}" --body "$(cat <<'EOF'
+### Template del body (compartido entre GitHub y Azure Repos)
+
+El body del PR es **identico** en ambas plataformas. Escribirlo a un archivo temporal para reutilizarlo:
+
+```markdown
 ## Issue
 
 {Link al issue original o descripcion}
@@ -335,7 +366,7 @@ gh pr create --title "{commit_prefix}: {titulo conciso}" --body "$(cat <<'EOF'
 
 **Tipo**: {bug/feature/refactor/security/performance/docs/chore}
 **Riesgo**: {LOW/MEDIUM/HIGH}
-**Fuente**: {github/linear/jira/free-text}
+**Fuente**: {github/linear/azure-devops/jira/free-text}
 
 ## Causa Raiz
 
@@ -360,18 +391,125 @@ gh pr create --title "{commit_prefix}: {titulo conciso}" --body "$(cat <<'EOF'
 
 ---
 *Generado por fix-issue skill — revisar cuidadosamente antes de merge*
+```
+
+### Crear PR — GitHub (default)
+
+```bash
+if [ "$IS_AZURE_REPOS" = "false" ]; then
+  gh pr create --title "{commit_prefix}: {titulo conciso}" --body "$(cat <<'EOF'
+## Issue
+
+{Link al issue original o descripcion}
+
+## Clasificacion
+
+**Tipo**: {bug/feature/refactor/security/performance/docs/chore}
+**Riesgo**: {LOW/MEDIUM/HIGH}
+**Fuente**: {github/linear/azure-devops/jira/free-text}
+
+## Causa Raiz
+
+{1-3 oraciones explicando que estaba mal y por que}
+
+## Cambios
+
+- `path/to/file.ts` — {que se cambio y por que}
+
+## Testing
+
+- [ ] Tests existentes pasan
+- [ ] Tests nuevos agregados (si aplica)
+- [ ] Verificacion manual: {pasos para verificar}
+
+## Tracking
+
+- **Issue**: {external_id} ({source_url})
+- **Cliente**: {client_name}
+- **Clasificacion**: {type}
+
+---
+*Generado por fix-issue skill — revisar cuidadosamente antes de merge*
 EOF
 )"
+fi
 ```
 
 Si el issue es de GitHub: agregar `Closes #{number}` en el body para auto-close on merge.
 
+### Crear PR — Azure Repos (si `IS_AZURE_REPOS=true`)
+
+```bash
+if [ "$IS_AZURE_REPOS" = "true" ]; then
+  # Escribir el body a un archivo temporal (az repos pr create acepta @filename)
+  cat > /tmp/pr-body.md <<'EOF'
+## Issue
+
+{Link al issue original o descripcion}
+
+## Clasificacion
+
+**Tipo**: {bug/feature/refactor/security/performance/docs/chore}
+**Riesgo**: {LOW/MEDIUM/HIGH}
+**Fuente**: {github/linear/azure-devops/jira/free-text}
+
+## Causa Raiz
+
+{1-3 oraciones explicando que estaba mal y por que}
+
+## Cambios
+
+- `path/to/file.ts` — {que se cambio y por que}
+
+## Testing
+
+- [ ] Tests existentes pasan
+- [ ] Tests nuevos agregados (si aplica)
+- [ ] Verificacion manual: {pasos para verificar}
+
+## Tracking
+
+- **Issue**: {external_id} ({source_url})
+- **Cliente**: {client_name}
+- **Clasificacion**: {type}
+
+---
+*Generado por fix-issue skill — revisar cuidadosamente antes de merge*
+EOF
+
+  # Crear el PR en Azure Repos
+  PR_JSON=$(az repos pr create \
+    --source-branch "{branch_name}" \
+    --target-branch "{default_branch}" \
+    --title "{commit_prefix}: {titulo conciso}" \
+    --description "@/tmp/pr-body.md" \
+    --output json)
+
+  # Extraer el URL del PR desde el campo `webUrl` del JSON
+  PR_URL=$(echo "$PR_JSON" | jq -r '.webUrl // .repository.webUrl')
+  PR_ID=$(echo "$PR_JSON" | jq -r '.pullRequestId')
+
+  # Si el issue original era un ADO Work Item, linkear el PR al work item
+  if [ "{source_type}" = "azure-devops" ]; then
+    az repos pr work-item add --id "$PR_ID" --work-items "{wi_id}"
+  fi
+fi
+```
+
+**Notas sobre Azure Repos:**
+- `az repos pr create` retorna JSON con el URL del PR en el campo `webUrl` — ese es el que se reporta al usuario
+- Terminologia ADO: "Pull Request" (PR), "Work Item" (equivalente a issue), "Reviewer" (similar a GitHub)
+- `--description "@filename"` lee el body desde un archivo (util para markdown multi-linea)
+- El link PR <-> Work Item se hace con `az repos pr work-item add` despues de crear el PR
+
 **Output al usuario:**
 ```
 PR CREADO: {pr_url}
+  Plataforma: {GitHub/Azure Repos}
   Titulo: {pr_title}
   Base: {default_branch} <- {branch_name}
   Archivos: {count} modificados
+  {Si ADO y origen fue Work Item:} Work Item {wi_id} linkeado al PR
 ```
 
 ---
