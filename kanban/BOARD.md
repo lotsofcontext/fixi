@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 01:07:20
+> **Última actualización**: 2026-04-07 01:08:26
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 

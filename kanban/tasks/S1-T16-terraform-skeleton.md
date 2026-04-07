@@ -87,7 +87,36 @@ Modules (5 módulos × 3 archivos = 15 archivos):
 - Sin secrets hardcoded — todos via Key Vault data lookups
 - Provider versions pinned: azurerm `~> 3.110`, azuread `~> 2.50`
 
-**Verificación local de validate**: el agente generó un `.terraform.lock.hcl` real con hashes para `hashicorp/azurerm` y `hashicorp/azuread`, lo que sugiere que ejecutó `terraform init -backend=false` (NO hizo `apply`).
+**Verificación local de validate**: el agente generó un `.terraform.lock.hcl` real con hashes para `hashicorp/azurerm 3.117.1`, `hashicorp/azuread 2.53.1` y `hashicorp/random 3.8.1`. Ejecutó `terraform init -backend=false` + `terraform validate` + `terraform fmt -recursive -check` (todos passing). Limpió `.terraform/` después. NO ejecutó `apply`.
+
+**Decisiones de diseño documentadas por el agente**:
+1. **ACI sobre AKS** — más simple y barato para un único worker. Premium ACR + private endpoint documentado como upgrade path
+2. **User-assigned (no system-assigned) Managed Identity** — permite RBAC antes de que ACI exista, sobrevive container rebuilds
+3. **Key Vault en modo RBAC, no access policies** — moderno, integra con PIM
+4. **Secret injection via `secure_environment_variables`** — el módulo ACI lee secret VALUES en plan-time via `data.azurerm_key_vault_secret`, parsea el vault name del URI con `regex(...)`. Trade-off: rotar secret requiere re-apply
+5. **Placeholder secrets en KV** — `anthropic-api-key`, `ado-pat`, `github-pat` con valor `REPLACE_ME` y `lifecycle.ignore_changes` para que valores out-of-band sobrevivan re-applies
+6. **Terraform runner necesita `Key Vault Secrets Officer` temporal** — para el bootstrap, revocable después
+7. **Purge protection + soft-delete en KV** — no reversible, documentado para que reviewers sepan que `terraform destroy` no tira todo
+8. **NSG deny-all inbound** (priority 4096) — Fixi es invocado por queue/CLI, no via HTTP ingress. Postura explícita
+9. **Random suffixes en root (no en módulo)** — nombres estables across plans mientras state persista
+10. **`.terraform.lock.hcl` committed** — recomendación HashiCorp para builds reproducibles
+
+**Cosas explícitamente no implementadas (documentadas como futuro)**:
+- Azure Firewall / egress allowlist (path de hardening)
+- Premium ACR + private endpoint (upgrade path)
+- Private endpoint en Key Vault (Premium o Standard + DNS zone)
+- Remote state backend (commented stub en `versions.tf`)
+- ADO RBAC para work items (no hay provider clean, va por REST API o portal)
+- CI/CD pipeline definition (out of scope S1-T16)
+
+**Security review del agente**:
+- Cero secrets hardcoded
+- Cero tenant/subscription/principal IDs reales
+- `.gitignore` bloquea state files y root tfvars
+- `secret_references` output marcado `sensitive = true`
+- ACR admin disabled, KV RBAC mode, NSG deny-all inbound, UAMI scoped a 1 ACR + 1 KV
+
+**Líneas totales**: ~1,955 (HCL + Markdown + tfvars).
 
 **README.md (14KB)** incluye:
 - Arquitectura diagram
