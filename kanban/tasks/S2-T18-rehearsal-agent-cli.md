@@ -3,7 +3,7 @@ id: S2-T18
 title: Rehearsal end-to-end del agent CLI vs WI-101/102/103
 sprint: S2
 day: 4
-status: pending
+status: done
 priority: P0
 type: research
 tags: [agent, rehearsal, demo, day-4]

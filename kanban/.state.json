@@ -211,7 +211,7 @@
   },
   "S2-T18": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Rehearsal end-to-end del agent CLI vs WI-101/102/103",
     "updated": "2026-04-07T04:30:00"
   },
