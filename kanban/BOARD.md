@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 20:34:13
+> **Última actualización**: 2026-04-07 20:36:00
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,12 +8,12 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 2 | 35 | 1 | **95%** |
+| **38** | 0 | 0 | 0 | 37 | 1 | **100%** |
 
-_Progress = done / (total − cancelled) = 35/37_
+_Progress = done / (total − cancelled) = 37/37_
 
 ```
-████████████████████████████░░ 95%
+██████████████████████████████ 100%
 ```
 
 ## Por Sprint
@@ -21,16 +21,9 @@ _Progress = done / (total − cancelled) = 35/37_
 | Sprint | Total | Done | In Progress | Pending | Blocked | Cancelled | Progress |
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
-| **S2** | 20 | 18 | 0 | 2 | 0 | 0 | **90%** |
+| **S2** | 20 | 20 | 0 | 0 | 0 | 0 | **100%** |
 
-## 📋 Pending (2)
-
-| ID | Task | Sprint | Day | Priority | Estimated |
-|----|------|--------|-----|----------|-----------|
-| [[S2-T14]] | Dockerfile multi-stage (Node + Claude Code + Python + fixi) | S2 | D3 | P2 | 1h30m |
-| [[S2-T15]] | docker-compose.yml para dev local | S2 | D3 | P2 | 30m |
-
-## ✅ Done (35)
+## ✅ Done (37)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -64,6 +57,8 @@ _Progress = done / (total − cancelled) = 35/37_
 | [[S2-T11]] | Implementar output.py (JSON + human formatters) | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T12]] | Wire CLI → orchestrator → output end-to-end | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T13]] | Tests unitarios — parser, hooks, prompts | S2 | 1h30m |  | 2026-04-07T04:30:00 |
+| [[S2-T14]] | Dockerfile multi-stage (Node + Claude Code + Python + fixi) | S2 | 1h30m |  | 2026-04-07T04:30:00 |
+| [[S2-T15]] | docker-compose.yml para dev local | S2 | 30m |  | 2026-04-07T04:30:00 |
 | [[S2-T16]] | GitHub Actions workflow de ejemplo | S2 | 45m |  | 2026-04-07T04:30:00 |
 | [[S2-T17]] | Azure Pipelines workflow de ejemplo | S2 | 45m |  | 2026-04-07T04:30:00 |
 | [[S2-T18]] | Rehearsal end-to-end del agent CLI vs WI-101/102/103 | S2 | 2h |  | 2026-04-07T04:30:00 |

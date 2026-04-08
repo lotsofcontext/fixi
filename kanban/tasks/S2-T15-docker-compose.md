@@ -3,7 +3,7 @@ id: S2-T15
 title: docker-compose.yml para dev local
 sprint: S2
 day: 3
-status: pending
+status: done
 priority: P2
 type: implementation
 tags: [agent, docker, dev-tooling, day-3]

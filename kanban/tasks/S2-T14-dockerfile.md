@@ -3,7 +3,7 @@ id: S2-T14
 title: Dockerfile multi-stage (Node + Claude Code + Python + fixi)
 sprint: S2
 day: 3
-status: pending
+status: done
 priority: P2
 type: implementation
 tags: [agent, docker, deployment, day-3]

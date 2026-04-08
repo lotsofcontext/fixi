@@ -1,0 +1,28 @@
+# =============================================================
+# Fixi Agent — docker-compose for local development
+# =============================================================
+# Usage:
+#   cd agent
+#   docker-compose run fixi resolve --work-item <url> --repo <url>
+# =============================================================
+
+services:
+  fixi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GH_TOKEN=${GH_TOKEN:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - AZURE_DEVOPS_PAT=${AZURE_DEVOPS_PAT:-}
+      - PYTHONUNBUFFERED=1
+      - PYTHONIOENCODING=utf-8
+    volumes:
+      # Mount skill/ directory from the repo root (read-only)
+      - ../skill:/opt/fixi/skill:ro
+      # Optional: mount a local repo instead of cloning
+      # - /path/to/target-repo:/workspace/target:rw
+    working_dir: /workspace
+    # Override entrypoint for interactive debugging:
+    # entrypoint: ["/bin/bash"]

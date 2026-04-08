@@ -187,13 +187,13 @@
   },
   "S2-T14": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "Dockerfile multi-stage (Node + Claude Code + Python + fixi)",
     "updated": "2026-04-07T04:30:00"
   },
   "S2-T15": {
     "sprint": "S2",
-    "status": "pending",
+    "status": "done",
     "title": "docker-compose.yml para dev local",
     "updated": "2026-04-07T04:30:00"
   },
