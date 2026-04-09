@@ -226,5 +226,77 @@
     "status": "done",
     "title": "Update PLAN.md — agent como Phase 6 central",
     "updated": "2026-04-07T04:30:00"
+  },
+  "S3-T01": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Crear .claude/agents/ dir para agentes de simulacion GlobalMVM",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T02": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-elkin-ceo (CEO sponsor)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T03": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-joaris-architect (Champion Tecnico)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T04": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-jefferson-hyperautomation (dio el prompt original)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T05": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-liset-data-ai (Lider Datos+IA, Centro Aceleracion)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T06": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-john-bairo-architect (escalability gatekeeper)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T07": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-jenny-product-owner (PO Energy Suite)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T08": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-victor-operations (ORIGINO el caso de uso)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T09": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Draft agente globalmvm-carlos-regression-prevention (dev senior)",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T10": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Dry-run en paralelo — los 8 agentes critican Fixi PoC",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T11": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Generar FAQ defensivo a partir de los 8 agentes",
+    "updated": "2026-04-08T00:00:00"
+  },
+  "S3-T12": {
+    "sprint": "S3",
+    "status": "done",
+    "title": "Documentar casos de uso del equipo de simulacion",
+    "updated": "2026-04-08T00:00:00"
   }
 }

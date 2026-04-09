@@ -1,6 +1,6 @@
 # Fixi Kanban Board
 
-> **Última actualización**: 2026-04-07 20:36:00
+> **Última actualización**: 2026-04-08 21:00:28
 > **Auto-generado** por `update_board.py` — NO editar a mano.
 > Ver: [[README|Cómo usar el kanban]] · [[SPRINT-1|Sprint actual]] · [[SPRINT-2|Sprint siguiente]] · [[BACKLOG|Backlog]] · [[PLAN|Roadmap]]
 
@@ -8,9 +8,9 @@
 
 | Total | 🔄 In Progress | ⛔ Blocked | 📋 Pending | ✅ Done | 🚫 Cancelled | Progress |
 |-------|----------------|------------|-------------|---------|---------------|----------|
-| **38** | 0 | 0 | 0 | 37 | 1 | **100%** |
+| **50** | 0 | 0 | 0 | 49 | 1 | **100%** |
 
-_Progress = done / (total − cancelled) = 37/37_
+_Progress = done / (total − cancelled) = 49/49_
 
 ```
 ██████████████████████████████ 100%
@@ -22,8 +22,9 @@ _Progress = done / (total − cancelled) = 37/37_
 |--------|-------|------|-------------|---------|---------|-----------|----------|
 | **S1** | 18 | 17 | 0 | 0 | 0 | 1 | **100%** |
 | **S2** | 20 | 20 | 0 | 0 | 0 | 0 | **100%** |
+| **S3** | 12 | 12 | 0 | 0 | 0 | 0 | **100%** |
 
-## ✅ Done (37)
+## ✅ Done (49)
 
 | ID | Task | Sprint | Estimated | Actual | Completed |
 |----|------|--------|-----------|--------|-----------|
@@ -64,6 +65,18 @@ _Progress = done / (total − cancelled) = 37/37_
 | [[S2-T18]] | Rehearsal end-to-end del agent CLI vs WI-101/102/103 | S2 | 2h |  | 2026-04-07T04:30:00 |
 | [[S2-T19]] | Update CLIENT-FACING.md — narrativa skill → agent | S2 | 1h |  | 2026-04-07T04:30:00 |
 | [[S2-T20]] | Update PLAN.md — agent como Phase 6 central | S2 | 30m |  | 2026-04-07T04:30:00 |
+| [[S3-T01]] | Crear .claude/agents/ dir para agentes de simulacion GlobalMVM | S3 | 5m | 2m | 2026-04-08T00:00:00 |
+| [[S3-T02]] | Draft agente globalmvm-elkin-ceo (CEO sponsor) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T03]] | Draft agente globalmvm-joaris-architect (Champion Tecnico) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T04]] | Draft agente globalmvm-jefferson-hyperautomation (dio el prompt original) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T05]] | Draft agente globalmvm-liset-data-ai (Lider Datos+IA, Centro Aceleracion) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T06]] | Draft agente globalmvm-john-bairo-architect (escalability gatekeeper) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T07]] | Draft agente globalmvm-jenny-product-owner (PO Energy Suite) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T08]] | Draft agente globalmvm-victor-operations (ORIGINO el caso de uso) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T09]] | Draft agente globalmvm-carlos-regression-prevention (dev senior) | S3 | 15m | 5m | 2026-04-08T00:00:00 |
+| [[S3-T10]] | Dry-run en paralelo — los 8 agentes critican Fixi PoC | S3 | 45m | 25m | 2026-04-08T00:00:00 |
+| [[S3-T11]] | Generar FAQ defensivo a partir de los 8 agentes | S3 | 30m | 15m | 2026-04-08T00:00:00 |
+| [[S3-T12]] | Documentar casos de uso del equipo de simulacion | S3 | 20m | 10m | 2026-04-08T00:00:00 |
 
 ## 🚫 Cancelled (1)
 
