@@ -1,33 +1,136 @@
 # Fixi
 
-> **Autonomous Issue Resolution Agent** — takes a ticket, analyzes the codebase, implements the fix, and creates a PR. End-to-end, with human-in-the-loop by default.
+> **Autonomous issue resolution agent** — resolve tickets end-to-end from your CI/CD pipeline. Invoke from the CLI, get a Pull Request back.
 
-Fixi automates the full ticket lifecycle: **intake → classification → root cause analysis → branch → fix → tests → PR → tracking**. It runs as a Claude Code skill, operates across any language or stack, and integrates with GitHub, Azure DevOps, Jira, and Linear.
+```bash
+fixi resolve \
+  --work-item https://dev.azure.com/globalmvm/EnergySuite/_workitems/edit/4521 \
+  --repo https://dev.azure.com/globalmvm/EnergySuite/_git/energy-tracker
+```
+
+Fixi takes a work item (GitHub Issue, Azure DevOps Work Item, Jira, Linear, or free text), clones the target repo, runs a 10-step workflow — parse, classify, analyze root cause, branch, fix, validate, PR — and hands you a Pull Request ready for review. Autonomous. Auditable. With 13 safety guardrails enforced as code.
 
 The goal is not to replace developers. The goal is to hand them PRs ready for review instead of empty tickets ready for investigation.
 
 ---
 
-## What makes Fixi different
+## It works. Here's the evidence.
 
-- **Never invents information.** If data is missing, it halts and asks. No hallucinated root causes.
-- **Never touches `main`.** Every fix happens on an isolated branch with a PR for human review.
-- **Minimum change only.** No scope creep, no speculative refactoring, no "while I'm here" cleanups.
-- **13 guardrails enforced continuously** — from Safety Gate (Paso 0) to pre-push verification.
-- **Automatic rollback** if any step fails.
-- **3 autonomy levels** — `GUIDED` (default, step-by-step approval), `CONFIRM_PLAN` (one-OK execution), `FULL_AUTO` (hands-free, except for security/migrations).
+On 2026-04-07 Fixi autonomously resolved three intentionally-seeded bugs in a demo .NET repo — one bug, one performance issue, one security vulnerability. Each run: clone repo, find root cause, fix, validate, open PR. Zero human intervention.
+
+| Work Item | Type | PR | Duration | Cost | Turns |
+|-----------|------|-----|----------|------|-------|
+| [WI-101](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-101-bug-lectura-negativa.md) | `bug` — DivideByZeroException | [#2](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/2) | 4m 18s | $0.61 | 24 |
+| [WI-102](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-102-perf-listado-medidores.md) | `performance` — N+1 query | [#3](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/3) | 4m 53s | $1.16 | 34 |
+| [WI-103](https://github.com/lotsofcontext/fixi-demo-dotnet/blob/master/docs/issues/WI-103-security-endpoint-admin.md) | `security` — OWASP A01 | [#4](https://github.com/lotsofcontext/fixi-demo-dotnet/pull/4) | 5m 03s | $1.13 | 31 |
+
+**Totals**: 14 minutes, $2.90 USD, 89 turns, 3 PRs. Clone the [demo repo](https://github.com/lotsofcontext/fixi-demo-dotnet), read the PRs, inspect the diffs. The evidence is verifiable.
 
 ---
 
-## End-to-end flow
+## Two layers
 
+Fixi is built in two layers that can be understood and audited independently:
+
+### 🧠 Layer 1 — The playbook (`skill/SKILL.md`)
+
+A human-readable markdown file that defines the 10-step workflow: intake, classification, root cause analysis, branching, fix, validations, PR creation, tracking, cleanup. 763 lines of plain text that any engineer can read, audit, and modify. Versioned in git. No black box.
+
+This is the **"what to do"**. It's also the system prompt the agent uses at runtime — one source of truth, no drift.
+
+### 🤖 Layer 2 — The deployable runtime (`agent/`)
+
+A Python CLI (`fixi`) built on the [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk-python). It:
+
+- Loads the playbook as a system prompt with 6 autonomous-mode transformations (strips interactive approval gates, inverts default to FULL_AUTO, etc.)
+- Parses work item references into a normalized structure (6 source types supported)
+- Clones the target repo with auth injection (GH_TOKEN, AZURE_DEVOPS_PAT)
+- Invokes the agent loop with 13 guardrails enforced as `PreToolUse` hooks
+- Extracts the PR URL, branch, classification, files changed from the output
+- Returns structured JSON for CI/CD consumption
+
+This is the **"how to execute it without a human in the loop"**. 1,165 lines of Python. 136 unit tests.
+
+---
+
+## Quick start
+
+### Install
+
+```bash
+git clone https://github.com/lotsofcontext/fixi
+cd fixi/agent
+python -m venv venv
+source venv/bin/activate      # or: venv\Scripts\activate on Windows
+pip install -e .
+fixi check                    # verify Claude Code CLI, git, auth tokens
 ```
-Ticket ──▶ Parse ──▶ Classify ──▶ Analyze ──▶ Branch ──▶ Fix ──▶ Tests ──▶ PR ──▶ Tracking
+
+### Resolve an issue
+
+```bash
+# Azure DevOps Work Item
+fixi resolve \
+  --work-item https://dev.azure.com/org/project/_workitems/edit/4521 \
+  --repo https://dev.azure.com/org/project/_git/my-repo
+
+# GitHub Issue
+fixi resolve \
+  --work-item https://github.com/org/repo/issues/42 \
+  --repo https://github.com/org/repo
+
+# Local markdown file (for testing)
+fixi resolve \
+  --work-item docs/issues/WI-101-bug.md \
+  --repo-path ./my-local-repo
+
+# JSON output for CI/CD parsing
+fixi resolve --work-item <url> --repo <url> --output json
 ```
 
-Every step is auditable. Every action is reversible. See [docs/diagrams.md](docs/diagrams.md) for Mermaid visualizations of the flow, classification tree, autonomy levels, and tracking pipeline.
+### Required environment variables
 
-### The 7 classifications
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...          # required
+export GH_TOKEN=ghp_...                       # for GitHub repos
+export AZURE_DEVOPS_PAT=...                   # for Azure Repos
+```
+
+---
+
+## CI/CD integration
+
+Fixi is designed to run as a step in your existing pipeline. Copy-paste examples:
+
+### GitHub Actions
+
+[`agent/.github/workflows/example-fixi-resolve.yml`](agent/.github/workflows/example-fixi-resolve.yml) — manual trigger with `workflow_dispatch`, installs the CLI, runs against a work item, uploads result as artifact, writes step summary.
+
+### Azure DevOps Pipelines
+
+[`agent/azure-pipelines/example-fixi-resolve.yml`](agent/azure-pipelines/example-fixi-resolve.yml) — parameters for `workItemUrl` and `repoUrl`, uses a Variable Group `fixi-secrets` for `ANTHROPIC_API_KEY` and `AZURE_DEVOPS_PAT`.
+
+### Docker
+
+[`agent/Dockerfile`](agent/Dockerfile) — multi-stage build (Node + Claude Code CLI + Python + Fixi) targeting ~1.5 GB. [`agent/docker-compose.yml`](agent/docker-compose.yml) for local dev.
+
+---
+
+## What makes Fixi different
+
+- **Transparent**: the playbook is a markdown file you can read line-by-line. No black box flows, no hidden prompts.
+- **Never invents information.** If data is missing, it halts and asks. Verified on the WI-101 run where Fixi marked acceptance criteria as N/A rather than fabricate evidence.
+- **Never touches `main`.** Every fix is an isolated branch with a PR for human review. Guardrail-enforced.
+- **Minimum change only.** No scope creep, no speculative refactoring, no "while I'm here" cleanups. Verified on all 3 PRs (max 9 lines changed).
+- **13 guardrails as code hooks**, not prompts — `PreToolUse` blockers that can't be argued with. See [`agent/src/fixi_agent/hooks.py`](agent/src/fixi_agent/hooks.py).
+- **Auto-escalation**: security issues, DB migrations, CI/CD changes, >15 files, or ambiguous root cause all force GUIDED mode regardless of the caller's autonomy setting.
+- **3 autonomy levels**: `GUIDED` (approval at every step), `CONFIRM_PLAN` (one-OK execution), `FULL_AUTO` (hands-free). Default is FULL_AUTO for CLI; agent auto-drops to GUIDED when escalators fire.
+
+---
+
+## The 7 classifications
+
+Fixi assigns one of these types based on keywords + work item context:
 
 | Type | Branch prefix | Commit prefix | Use when |
 |------|---------------|---------------|----------|
@@ -39,45 +142,36 @@ Every step is auditable. Every action is reversible. See [docs/diagrams.md](docs
 | `docs` | `docs/` | `docs:` | README, API docs, comments, typos |
 | `chore` | `chore/` | `chore:` | Dependencies, CI/CD, config, tooling |
 
-Priority when ambiguous: `security > bug > performance > feature > refactor > docs > chore`. Full taxonomy in [skill/references/classification.md](skill/references/classification.md).
+Priority when ambiguous: `security > bug > performance > feature > refactor > docs > chore`. Full taxonomy in [`skill/references/classification.md`](skill/references/classification.md).
 
 ---
 
 ## Stack agnostic
 
-Fixi works with any codebase that has source files and a version control system.
+Fixi works with any codebase that has source files and version control.
 
-**Languages**: C#/.NET · Java · Python · TypeScript · JavaScript · Go · Rust · Angular · React · and anything else
+**Languages**: C#/.NET · Java · Python · TypeScript · JavaScript · Go · Rust · Angular · React — and anything else
 
-**Ticket sources**: GitHub Issues · Azure DevOps Work Items · Jira · Linear · free-text descriptions
+**Ticket sources**: GitHub Issues · Azure DevOps Work Items · Jira · Linear · local markdown files · free-text descriptions
 
 **Code platforms**: GitHub · Azure Repos · GitLab
 
 **CI/CD**: GitHub Actions · Azure Pipelines · Jenkins · GitLab CI (auto-detected)
 
+**Validations**: tests, lint, and build runners auto-detected per language (dotnet, npm, pytest, cargo, go, maven, gradle, ruff, eslint, etc.)
+
 ---
 
-## Usage
+## Security by design
 
-Fixi runs as a Claude Code skill. Install by copying `skill/` to your project's `.claude/skills/fix-issue/`.
-
-```bash
-# GitHub issue URL
-/fix-issue https://github.com/org/repo/issues/123
-
-# Azure DevOps work item
-/fix-issue https://dev.azure.com/org/project/_workitems/edit/4521
-
-# Shorthand
-/fix-issue #42
-
-# Linear / Jira
-/fix-issue LINEAR-ABC-123
-/fix-issue PROJ-789
-
-# Free text
-/fix-issue "Login fails with 500 when email contains +"
-```
+- **Safety Gate** verifies context, repo, working tree, and client before any action
+- **13 guardrails** enforced at every tool use as `PreToolUse` hooks — see [`skill/references/guardrails.md`](skill/references/guardrails.md) for the spec and [`agent/src/fixi_agent/hooks.py`](agent/src/fixi_agent/hooks.py) for the implementation
+- **Sensitive files protected**: `.env`, credentials, keys, certificates — never modified, never read into the prompt
+- **CI/CD protection**: changes to `.github/workflows`, `azure-pipelines.yml`, `Jenkinsfile`, etc. force GUIDED mode
+- **DB migration protection**: changes to `migrations/`, `alembic/`, `prisma/`, `*.sql` force GUIDED
+- **Scope limits**: fixes affecting >15 files auto-escalate to GUIDED
+- **Auth token sanitization**: secrets are stripped from all logs and error messages
+- **No force push. No direct commits to `main`. No bypassing git hooks.**
 
 ---
 
@@ -87,52 +181,71 @@ Fixi runs as a Claude Code skill. Install by copying `skill/` to your project's 
 fixi/
 ├── README.md                   # This file
 ├── README.es.md                # Spanish version (bilingual sync)
-├── CLAUDE.md                   # Rules for Claude Code when working on this repo
-├── HANDOFF-FROM-HQ.md           # Context from GlobalMVM engagement
+├── CLAUDE.md                   # North Star Prompt + rules for Claude Code
+├── HANDOFF-FROM-HQ.md          # Context from GlobalMVM engagement
+├── HANDOFF-NORTH-STAR.md       # Audit vs 9 non-negotiable capabilities
 │
-├── skill/                      # The agent itself
-│   ├── SKILL.md                # Core 10-step workflow
+├── agent/                      # 🤖 The deployable runtime
+│   ├── src/fixi_agent/
+│   │   ├── cli.py              # CLI entry point (fixi resolve, fixi check)
+│   │   ├── orchestrator.py     # Core agent loop (Claude Agent SDK integration)
+│   │   ├── prompts.py          # Loads SKILL.md with 6 autonomous transforms
+│   │   ├── parser.py           # Multi-source work item parser (Gap D priority)
+│   │   ├── cloner.py           # git clone with auth injection
+│   │   └── hooks.py            # 13 guardrails as PreToolUse hooks
+│   ├── tests/                  # 136 unit tests + integration smoke test
+│   ├── .github/workflows/      # GitHub Actions workflow example
+│   ├── azure-pipelines/        # Azure DevOps Pipelines example
+│   ├── Dockerfile              # Multi-stage build (Node + Python + Claude Code)
+│   ├── docker-compose.yml      # Local dev
+│   └── pyproject.toml          # Package config
+│
+├── skill/                      # 🧠 The playbook (human-readable)
+│   ├── SKILL.md                # 10-step workflow (763 lines)
 │   └── references/
-│       ├── classification.md    # 7-type taxonomy
-│       └── guardrails.md        # 13 safety rules
+│       ├── classification.md   # 7-type taxonomy
+│       └── guardrails.md       # 13 safety rules
+│
+├── terraform/                  # Azure IaC skeleton (25 files, 5 modules)
+│   ├── main.tf
+│   ├── modules/
+│   │   ├── container_instance/ # ACI running Fixi
+│   │   ├── container_registry/ # ACR for the image
+│   │   ├── key_vault/          # Secrets (API keys, PATs)
+│   │   ├── managed_identity/   # UAMI with least privilege
+│   │   └── networking/         # VNet + NSG (deny-all inbound)
+│   └── README.md
+│
+├── kanban/                     # Self-updating project board
+│   ├── BOARD.md                # Auto-generated (do not edit)
+│   ├── tasks/                  # Individual task files (source of truth)
+│   ├── history/                # Append-only daily transition logs
+│   └── update_board.py         # Regenerate board from task files
 │
 └── docs/
     ├── PLAN.md                 # 6-phase roadmap (46 tasks)
     ├── SPEC.md                 # Full technical specification
     ├── diagrams.md             # 5 Mermaid diagrams
-    ├── CLIENT-FACING.md        # Business-language overview
+    ├── CLIENT-FACING.md        # Business-language overview (v3.0)
+    ├── globalmvm-review-simulation.md  # 7-stakeholder review simulation
     └── planning/
-        └── BACKLOG.md          # Prioritized backlog
+        ├── BACKLOG.md
+        ├── SPRINT-1.md
+        └── SPRINT-2.md
 ```
 
 ---
 
-## Roadmap
+## Status
 
-Fixi is being built in 6 phases. See [docs/PLAN.md](docs/PLAN.md) for the full roadmap and [docs/planning/BACKLOG.md](docs/planning/BACKLOG.md) for current priorities.
+Both development sprints are **complete**.
 
-| Phase | Focus | Status |
-|-------|-------|--------|
-| **1. Fundamentos (MVP)** | GitHub Issues parser, classification, root cause, branch/commit/PR flow | Spec complete |
-| **2. Multi-source + Azure DevOps** | Linear, Jira, Azure DevOps Work Items, free text, intelligent disambiguation | Spec complete |
-| **3. Autonomy + Testing** | `CONFIRM_PLAN`, `FULL_AUTO`, automatic test runner detection, regression tests | Spec complete |
-| **4. Triple-write tracking** | Client's ACTIVO.md + Mission Control (tasks, activity log, inbox) | Spec complete |
-| **5. Hardening + Guardrails** | Rollback, scope limits, sensitive file protection, dry-run mode | Spec complete |
-| **6. Ecosystem + Infra + Public Demo** | Azure IaC (Terraform), MCP Server, A2A Protocol, `/status` endpoint, self-dogfooding | Spec complete |
+| Sprint | Scope | Status |
+|--------|-------|--------|
+| **Sprint 1** | Skill workflow (10 steps), classification taxonomy, guardrails spec, demo repo with seeded bugs, Terraform skeleton, client-facing docs | ✅ **100%** (17/17 tasks) |
+| **Sprint 2** | Python agent on Claude Agent SDK, CLI, 13 guardrails as hooks, 6-source parser, Dockerfile, GH Actions + Azure Pipelines workflows, 136 unit tests, 3 real PRs as evidence | ✅ **100%** (20/20 tasks) |
 
----
-
-## Security
-
-Fixi is designed for trust in production codebases:
-
-- **Safety Gate** verifies context, repo, working tree, and client before any action
-- **13 guardrails** enforced at every step — see [skill/references/guardrails.md](skill/references/guardrails.md)
-- **Sensitive files protected**: `.env`, credentials, keys, certificates — never modified
-- **CI/CD protection**: changes to `.github/workflows`, `azure-pipelines.yml`, etc. always force GUIDED mode
-- **Scope limits**: fixes affecting >15 files auto-escalate to GUIDED
-- **Audit trail**: every action logged in triple-write tracking (client state + mission control + activity log)
-- **No force push. No direct commits to `main`. No bypassing of git hooks.**
+See [`kanban/BOARD.md`](kanban/BOARD.md) for the full auto-generated board and [`docs/planning/SPRINT-1.md`](docs/planning/SPRINT-1.md) / [`docs/planning/SPRINT-2.md`](docs/planning/SPRINT-2.md) for per-sprint plans.
 
 ---
 
@@ -140,14 +253,29 @@ Fixi is designed for trust in production codebases:
 
 | Document | Purpose |
 |----------|---------|
-| [docs/PLAN.md](docs/PLAN.md) | 6-phase implementation roadmap |
-| [docs/SPEC.md](docs/SPEC.md) | Full technical specification |
-| [docs/diagrams.md](docs/diagrams.md) | 5 Mermaid diagrams (flow, classification, autonomy, tracking, architecture) |
-| [docs/CLIENT-FACING.md](docs/CLIENT-FACING.md) | Business-language overview for stakeholders |
-| [docs/planning/BACKLOG.md](docs/planning/BACKLOG.md) | Prioritized backlog |
-| [skill/SKILL.md](skill/SKILL.md) | 10-step workflow definition |
-| [skill/references/classification.md](skill/references/classification.md) | 7-type issue taxonomy |
-| [skill/references/guardrails.md](skill/references/guardrails.md) | 13 safety rules |
+| [`skill/SKILL.md`](skill/SKILL.md) | The 10-step workflow — also loaded as the agent's system prompt |
+| [`skill/references/classification.md`](skill/references/classification.md) | 7-type issue taxonomy with keywords and decision tree |
+| [`skill/references/guardrails.md`](skill/references/guardrails.md) | 13 safety rules spec |
+| [`agent/README.md`](agent/README.md) | Agent package overview |
+| [`docs/CLIENT-FACING.md`](docs/CLIENT-FACING.md) | Business-language overview for stakeholders (v3.0) |
+| [`docs/diagrams.md`](docs/diagrams.md) | 5 Mermaid diagrams (flow, classification, autonomy, tracking, architecture) |
+| [`docs/PLAN.md`](docs/PLAN.md) | 6-phase implementation roadmap |
+| [`docs/SPEC.md`](docs/SPEC.md) | Full technical specification |
+| [`docs/globalmvm-review-simulation.md`](docs/globalmvm-review-simulation.md) | Simulated review from 7 stakeholder personas |
+| [`terraform/README.md`](terraform/README.md) | Azure deployment guide |
+| [`HANDOFF-NORTH-STAR.md`](HANDOFF-NORTH-STAR.md) | Audit of the 9 non-negotiable capabilities from the client's original prompt |
+
+---
+
+## The demo sandbox
+
+[`lotsofcontext/fixi-demo-dotnet`](https://github.com/lotsofcontext/fixi-demo-dotnet) — ASP.NET Core 9 Web API (`GMVM.EnergyTracker`) with 3 intentionally-seeded bugs in the energy sector domain:
+
+- **Bug** (`CalculadoraConsumo.cs`): `DivideByZeroException` when two meter readings share the same date
+- **Performance** (`MedidorService.cs`): N+1 query — 51 SQL calls for 50 meters
+- **Security** (`AdminController.cs`): Missing `[Authorize]` attribute (OWASP A01 Broken Access Control)
+
+The repo ships with 5 failing tests on `master` — that's the baseline. Run `fixi resolve` against any of the three work items in `docs/issues/` and watch the tests turn green as PRs are created.
 
 ---
 
