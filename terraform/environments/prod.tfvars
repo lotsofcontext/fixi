@@ -34,12 +34,12 @@ container_image     = "fixi:1.0.0"
 container_cpu       = 2.0
 container_memory_gb = 4.0
 
-# Secrets — these URIs must point at the PRODUCTION Key Vault and must
-# be populated out-of-band (see README.md §Setup for the bootstrap
-# procedure).
-anthropic_api_key_secret_id = "https://kv-fixi-prod-EXAMPLE.vault.azure.net/secrets/anthropic-api-key"
-ado_pat_secret_id           = "https://kv-fixi-prod-EXAMPLE.vault.azure.net/secrets/ado-pat"
-github_pat_secret_id        = "https://kv-fixi-prod-EXAMPLE.vault.azure.net/secrets/github-pat"
+# Secrets — managed entirely via Key Vault. No URIs needed in tfvars.
+# After first apply, populate secrets out-of-band:
+#   VAULT_NAME=$(terraform output -raw key_vault_name)
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name anthropic-api-key --value "<real-value>"
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name ado-pat           --value "<real-value>"
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name github-pat        --value "<real-value>"
 
 # Longer retention for compliance / audit requirements
 log_retention_days = 90

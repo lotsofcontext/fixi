@@ -139,16 +139,19 @@ az storage container create -n tfstate --account-name sttfstatefixiprod
 
 Copy `environments/dev.tfvars` to something like `dev.auto.tfvars` (or pass it via `-var-file`) and fill in:
 
-- `container_image` — the ACR image tag you want to run
-- `anthropic_api_key_secret_id`, `ado_pat_secret_id`, `github_pat_secret_id` — see step 5
+- `container_image` — the ACR image tag you want to run (format: `repo:tag`)
+
+Secret URIs are no longer passed as variables. Secrets are managed entirely via Key Vault — see step 5.
 
 ### 4. First apply (bootstrap)
 
 ```bash
-terraform init
+terraform init                                      # Downloads providers, generates .terraform.lock.hcl
 terraform plan  -var-file=environments/dev.tfvars
 terraform apply -var-file=environments/dev.tfvars
 ```
+
+> **Note:** The first apply includes a 2-minute wait for Azure RBAC propagation (the `time_sleep` resource in the key_vault module). This is expected — do not cancel it.
 
 The first apply creates the Key Vault with empty secret placeholders (value `REPLACE_ME`) and all supporting infrastructure.
 
@@ -199,19 +202,17 @@ terraform destroy -var-file=environments/dev.tfvars
 |----------|------|---------|-------------|
 | `project` | string | `"fixi"` | Short project code used in every resource name |
 | `environment` | string | — | One of `dev`, `staging`, `prod` |
-| `location` | string | `"eastus2"` | Azure region |
-| `location_short` | string | `"eus2"` | Short code used in names (reserved) |
+| `location` | string | `"eastus2"` | Azure region (lowercase, no dashes) |
 | `tags` | map(string) | see `variables.tf` | Base tags merged with computed tags |
 | `vnet_address_space` | list(string) | `["10.40.0.0/16"]` | CIDR blocks for the VNet |
 | `aci_subnet_prefix` | string | `"10.40.1.0/24"` | CIDR for the ACI delegated subnet |
 | `container_image` | string | — | Image and tag inside the ACR, e.g. `fixi:1.0.0` |
-| `container_cpu` | number | `1.0` | vCPU allocated to the container |
-| `container_memory_gb` | number | `2.0` | Memory (GiB) allocated to the container |
-| `anthropic_api_key_secret_id` | string (sensitive) | — | Key Vault secret URI for the Anthropic API key |
-| `ado_pat_secret_id` | string (sensitive) | — | Key Vault secret URI for the Azure DevOps PAT |
-| `github_pat_secret_id` | string (sensitive) | — | Key Vault secret URI for the GitHub PAT |
+| `container_cpu` | number | `1.0` | vCPU allocated to the container (min 0.5) |
+| `container_memory_gb` | number | `2.0` | Memory (GiB) allocated to the container (min 0.5) |
 | `log_retention_days` | number | `30` | Log Analytics retention, 30-730 |
 | `additional_kv_reader_object_ids` | list(string) | `[]` | Extra AAD object IDs to grant KV Secrets User |
+
+> **Note:** Secret URIs are no longer passed as variables. The `container_instance` module reads secrets directly from Key Vault by name (`anthropic-api-key`, `ado-pat`, `github-pat`) using the `key_vault_id` passed between modules internally.
 
 ---
 
@@ -234,7 +235,7 @@ terraform destroy -var-file=environments/dev.tfvars
 | `aci_fqdn` | no | Internal FQDN of the ACI (not public) |
 | `log_analytics_workspace_id` | no | Log Analytics workspace GUID |
 | `log_analytics_workspace_resource_id` | no | Full resource ID of the workspace |
-| `secret_references` | **yes** | Map of secret URIs consumed by Fixi |
+| `secret_references` | **yes** | Key Vault name, URI, and list of expected secret names |
 
 ---
 

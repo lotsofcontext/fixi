@@ -29,51 +29,28 @@
 # -----------------------------------------------------------------------------
 # Data sources: read secret values from Key Vault at apply time.
 #
-# These resolve because the root module has already granted the
-# Terraform runner "Key Vault Secrets Officer" via the key_vault module.
-# If that role is revoked post-bootstrap, an operator must pass the
-# secret values via a different mechanism (e.g. external var from a
-# bootstrap script).
+# The key_vault_id is passed directly from the root module (via the
+# key_vault module output), which eliminates the chicken-and-egg problem
+# of parsing a URI for a vault that doesn't exist yet on first apply.
+#
+# If the Terraform runner's "Key Vault Secrets Officer" role is revoked
+# post-bootstrap, an operator must pass the secret values via a different
+# mechanism (e.g. external var from a bootstrap script).
 # -----------------------------------------------------------------------------
 
 data "azurerm_key_vault_secret" "anthropic_api_key" {
   name         = "anthropic-api-key"
-  key_vault_id = local.key_vault_id_from_secret_uri
+  key_vault_id = var.key_vault_id
 }
 
 data "azurerm_key_vault_secret" "ado_pat" {
   name         = "ado-pat"
-  key_vault_id = local.key_vault_id_from_secret_uri
+  key_vault_id = var.key_vault_id
 }
 
 data "azurerm_key_vault_secret" "github_pat" {
   name         = "github-pat"
-  key_vault_id = local.key_vault_id_from_secret_uri
-}
-
-# -----------------------------------------------------------------------------
-# Helper: derive the Key Vault resource ID from the secret URI.
-#
-# The root module passes secret URIs (e.g.
-#   https://kv-fixi-dev-abc123.vault.azure.net/secrets/anthropic-api-key)
-# but `data.azurerm_key_vault_secret` requires a key_vault_id. We parse
-# the vault name out of the URI and then look up the vault by name.
-# This keeps the module contract clean (caller only deals with URIs)
-# without adding a redundant variable.
-# -----------------------------------------------------------------------------
-
-locals {
-  # Pull "kv-fixi-dev-abc123" out of "https://kv-fixi-dev-abc123.vault.azure.net/secrets/..."
-  vault_name_from_uri = regex("https://([^.]+)\\.vault\\.azure\\.net", var.anthropic_api_key_secret_id)[0]
-}
-
-data "azurerm_key_vault" "target" {
-  name                = local.vault_name_from_uri
-  resource_group_name = var.resource_group_name
-}
-
-locals {
-  key_vault_id_from_secret_uri = data.azurerm_key_vault.target.id
+  key_vault_id = var.key_vault_id
 }
 
 # -----------------------------------------------------------------------------
@@ -136,12 +113,9 @@ resource "azurerm_container_group" "this" {
 
     # Non-sensitive configuration — visible in `terraform show`.
     environment_variables = {
-      FIXI_ENV                 = var.aci_name
-      FIXI_LOG_LEVEL           = "info"
-      AZURE_CLIENT_ID          = "" # Injected by ACI when using UAMI; placeholder so reviewers know to expect it
-      ANTHROPIC_API_KEY_SECRET = var.anthropic_api_key_secret_id
-      ADO_PAT_SECRET           = var.ado_pat_secret_id
-      GITHUB_PAT_SECRET        = var.github_pat_secret_id
+      FIXI_ENV        = var.environment
+      FIXI_LOG_LEVEL  = "info"
+      AZURE_CLIENT_ID = var.managed_identity_client_id
     }
 
     # Secret values — encrypted at rest, redacted in state.
@@ -149,6 +123,28 @@ resource "azurerm_container_group" "this" {
       ANTHROPIC_API_KEY = data.azurerm_key_vault_secret.anthropic_api_key.value
       ADO_PAT           = data.azurerm_key_vault_secret.ado_pat.value
       GITHUB_PAT        = data.azurerm_key_vault_secret.github_pat.value
+    }
+
+    # -----------------------------------------------------------------
+    # Liveness probe
+    #
+    # Detects zombie states (process alive but not functional — e.g.
+    # deadlock, memory leak, exhausted connection pool). Without this,
+    # restart_policy = "OnFailure" only kicks in when the process dies.
+    #
+    # Uses exec instead of http_get because Fixi is a queue worker,
+    # not a web server. The Fixi process must touch /tmp/fixi-alive
+    # on each successful poll cycle.
+    # -----------------------------------------------------------------
+    liveness_probe {
+      exec {
+        command = ["/bin/sh", "-c", "test -f /tmp/fixi-alive && find /tmp/fixi-alive -mmin -5 | grep -q ."]
+      }
+
+      initial_delay_seconds = 120
+      period_seconds        = 60
+      failure_threshold     = 3
+      timeout_seconds       = 5
     }
   }
 

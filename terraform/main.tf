@@ -76,6 +76,22 @@ resource "azurerm_resource_group" "this" {
 }
 
 # -----------------------------------------------------------------------------
+# Management lock (production only)
+#
+# Prevents accidental deletion of the entire resource group. Only
+# created for prod — dev/staging should be easy to tear down. An
+# operator must manually remove the lock before `terraform destroy`.
+# -----------------------------------------------------------------------------
+
+resource "azurerm_management_lock" "rg_lock" {
+  count      = var.environment == "prod" ? 1 : 0
+  name       = "lock-${local.resource_group_name}"
+  scope      = azurerm_resource_group.this.id
+  lock_level = "CanNotDelete"
+  notes      = "Production Fixi RG — remove this lock before terraform destroy."
+}
+
+# -----------------------------------------------------------------------------
 # Networking module
 #
 # Creates the VNet, the ACI delegated subnet, and the NSG that closes off
@@ -203,7 +219,8 @@ module "container_instance" {
   resource_group_name = azurerm_resource_group.this.name
   location            = var.location
 
-  aci_name = local.aci_name
+  aci_name    = local.aci_name
+  environment = var.environment
 
   # Compute sizing
   cpu_cores = var.container_cpu
@@ -214,15 +231,15 @@ module "container_instance" {
   container_image  = var.container_image
 
   # Identity
-  managed_identity_id = module.managed_identity.identity_id
+  managed_identity_id        = module.managed_identity.identity_id
+  managed_identity_client_id = module.managed_identity.client_id
 
   # Networking
   subnet_id = module.networking.aci_subnet_id
 
-  # Secret references (injected as env vars via Key Vault lookups)
-  anthropic_api_key_secret_id = var.anthropic_api_key_secret_id
-  ado_pat_secret_id           = var.ado_pat_secret_id
-  github_pat_secret_id        = var.github_pat_secret_id
+  # Secrets — key_vault_id passed directly so the module can look up
+  # secret values by name without URI parsing or chicken-and-egg issues.
+  key_vault_id = module.key_vault.key_vault_id
 
   # Observability
   log_analytics_workspace_id  = azurerm_log_analytics_workspace.this.workspace_id
@@ -230,11 +247,10 @@ module "container_instance" {
 
   tags = local.common_tags
 
+  # Only managed_identity is needed here — RBAC propagation requires the
+  # identity grants to be in place before ACI tries to pull or read secrets.
+  # All other dependencies are inferred from variable references above.
   depends_on = [
-    module.networking,
-    module.container_registry,
     module.managed_identity,
-    module.key_vault,
-    azurerm_log_analytics_workspace.this,
   ]
 }

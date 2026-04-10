@@ -9,10 +9,10 @@
 #   - Pin azurerm to the 3.110.x minor line: the v4 provider introduces
 #     breaking changes around storage account schema and MI bindings that
 #     we have not yet validated for Fixi.
-#   - azuread is used only for reading tenant/subscription context; the 2.50
-#     line is stable and carries long-term compatibility with azurerm 3.x.
 #   - random is used to generate suffixes for globally-unique resources
 #     (ACR, Key Vault).
+#   - time is used for RBAC propagation waits (time_sleep) in the
+#     key_vault module bootstrap flow.
 #
 # Upgrade policy:
 #   - Minor-version bumps: review release notes, run `terraform plan` in dev,
@@ -22,7 +22,7 @@
 ###############################################################################
 
 terraform {
-  required_version = ">= 1.6.0"
+  required_version = ">= 1.6.0, < 2.0.0"
 
   required_providers {
     azurerm = {
@@ -30,14 +30,14 @@ terraform {
       version = "~> 3.110"
     }
 
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 2.50"
-    }
-
     random = {
       source  = "hashicorp/random"
       version = "~> 3.6"
+    }
+
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.12"
     }
   }
 

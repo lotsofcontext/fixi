@@ -43,6 +43,12 @@ variable "terraform_principal_object_id" {
   type        = string
 }
 
+variable "grant_terraform_secrets_officer" {
+  description = "Set to false after the initial bootstrap to revoke Terraform's write access to vault secrets. First apply must be true."
+  type        = bool
+  default     = true
+}
+
 variable "tags" {
   description = "Tags applied to the Key Vault and its secret placeholders."
   type        = map(string)

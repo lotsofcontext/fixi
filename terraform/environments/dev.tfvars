@@ -31,14 +31,12 @@ container_image     = "fixi:dev-latest"
 container_cpu       = 0.5
 container_memory_gb = 1.0
 
-# Secrets — these URIs are examples. Replace with the real Key Vault
-# secret URIs after the first apply populates the vault.
-# The `{vault_name}` placeholder will be resolved by whoever is running
-# the deploy; do NOT commit real URIs that embed live vault names if
-# the Key Vault is public.
-anthropic_api_key_secret_id = "https://kv-fixi-dev-EXAMPLE.vault.azure.net/secrets/anthropic-api-key"
-ado_pat_secret_id           = "https://kv-fixi-dev-EXAMPLE.vault.azure.net/secrets/ado-pat"
-github_pat_secret_id        = "https://kv-fixi-dev-EXAMPLE.vault.azure.net/secrets/github-pat"
+# Secrets — managed entirely via Key Vault. No URIs needed in tfvars.
+# After first apply, populate secrets out-of-band:
+#   VAULT_NAME=$(terraform output -raw key_vault_name)
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name anthropic-api-key --value "<real-value>"
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name ado-pat           --value "<real-value>"
+#   az keyvault secret set --vault-name "$VAULT_NAME" --name github-pat        --value "<real-value>"
 
 # Observability — 30 days is the cheapest tier that still allows useful debugging
 log_retention_days = 30

@@ -118,11 +118,11 @@ output "log_analytics_workspace_resource_id" {
 # -----------------------------------------------------------------------------
 
 output "secret_references" {
-  description = "Map of Key Vault secret URIs consumed by Fixi. Sensitive."
+  description = "Map of Key Vault secret names that Fixi expects to find populated before startup."
   value = {
-    anthropic_api_key = var.anthropic_api_key_secret_id
-    ado_pat           = var.ado_pat_secret_id
-    github_pat        = var.github_pat_secret_id
+    key_vault_name = module.key_vault.key_vault_name
+    key_vault_uri  = module.key_vault.key_vault_uri
+    secret_names   = module.key_vault.placeholder_secret_names
   }
   sensitive = true
 }
