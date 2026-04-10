@@ -39,12 +39,11 @@ variable "location" {
   description = "Azure region where all resources will be deployed. Short name (e.g. eastus2)."
   type        = string
   default     = "eastus2"
-}
 
-variable "location_short" {
-  description = "Short code for the region used in resource names. Defaults derived in locals if empty."
-  type        = string
-  default     = "eus2"
+  validation {
+    condition     = can(regex("^[a-z0-9]+$", var.location))
+    error_message = "location must be a valid Azure region short name (lowercase alphanumeric, no dashes or spaces)."
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -83,50 +82,48 @@ variable "aci_subnet_prefix" {
 # -----------------------------------------------------------------------------
 
 variable "container_image" {
-  description = "Container image tag Fixi should run. Expected format: <repo>:<tag>. The repo is prefixed with the ACR login server at runtime."
+  description = "Container image tag Fixi should run. Expected format: <repo>:<tag>. The ACR login server is prepended automatically — do NOT include it here."
   type        = string
-  # Example value injected from pipeline, not defaulted here to force explicit choice:
-  # container_image = "fixi:1.4.2"
+
+  validation {
+    condition     = can(regex("^[a-z0-9._/-]+:[a-zA-Z0-9._-]+$", var.container_image))
+    error_message = "container_image must be in format 'repo:tag' (e.g. fixi:1.4.2). Do NOT include the registry server."
+  }
 }
 
 variable "container_cpu" {
   description = "vCPU allocated to the Fixi container. ACI minimum 0.5."
   type        = number
   default     = 1.0
+
+  validation {
+    condition     = var.container_cpu >= 0.5
+    error_message = "container_cpu must be at least 0.5 (ACI minimum)."
+  }
 }
 
 variable "container_memory_gb" {
   description = "Memory (in GiB) allocated to the Fixi container."
   type        = number
   default     = 2.0
+
+  validation {
+    condition     = var.container_memory_gb >= 0.5
+    error_message = "container_memory_gb must be at least 0.5 (ACI minimum)."
+  }
 }
 
 # -----------------------------------------------------------------------------
-# Secrets (Key Vault secret URIs)
+# Secrets
 #
-# These are NOT the secret values — they are URIs to secrets that already
-# exist in the Key Vault created by this module. The actual values are
-# written into Key Vault out-of-band (e.g. via `az keyvault secret set`) so
-# that Terraform state never touches them.
+# Secret VALUES are never passed through Terraform variables. They are:
+#   1. Created as "REPLACE_ME" placeholders by the key_vault module
+#   2. Populated out-of-band via `az keyvault secret set`
+#   3. Read at apply time by the container_instance module's data sources
+#
+# The secret names are fixed: anthropic-api-key, ado-pat, github-pat.
+# The key_vault_id is passed directly between modules (no URI parsing).
 # -----------------------------------------------------------------------------
-
-variable "anthropic_api_key_secret_id" {
-  description = "Full Key Vault secret URI for the Anthropic API key. Example: https://kv-fixi-dev-xxxx.vault.azure.net/secrets/anthropic-api-key"
-  type        = string
-  sensitive   = true
-}
-
-variable "ado_pat_secret_id" {
-  description = "Full Key Vault secret URI for the Azure DevOps Personal Access Token."
-  type        = string
-  sensitive   = true
-}
-
-variable "github_pat_secret_id" {
-  description = "Full Key Vault secret URI for the GitHub Personal Access Token."
-  type        = string
-  sensitive   = true
-}
 
 # -----------------------------------------------------------------------------
 # Observability

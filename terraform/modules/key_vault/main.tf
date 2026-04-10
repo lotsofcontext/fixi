@@ -63,11 +63,28 @@ resource "azurerm_key_vault" "this" {
 # -----------------------------------------------------------------------------
 
 resource "azurerm_role_assignment" "terraform_secrets_officer" {
+  count = var.grant_terraform_secrets_officer ? 1 : 0
+
   scope                = azurerm_key_vault.this.id
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = var.terraform_principal_object_id
 
-  description = "Temporary Terraform grant to create secret placeholders on first apply"
+  description = "Temporary Terraform grant to create secret placeholders — set grant_terraform_secrets_officer=false after bootstrap"
+}
+
+# -----------------------------------------------------------------------------
+# RBAC propagation wait
+#
+# Azure RBAC assignments propagate eventually (5-15 minutes in practice).
+# The depends_on on the role assignment above guarantees creation ORDER
+# but not propagation COMPLETION. Without this wait, the secret
+# placeholder creation below fails intermittently with 403 Forbidden.
+# -----------------------------------------------------------------------------
+
+resource "time_sleep" "wait_for_rbac" {
+  count           = var.grant_terraform_secrets_officer ? 1 : 0
+  depends_on      = [azurerm_role_assignment.terraform_secrets_officer]
+  create_duration = "120s"
 }
 
 # -----------------------------------------------------------------------------
@@ -100,13 +117,13 @@ resource "azurerm_key_vault_secret" "placeholders" {
 
   content_type = "text/plain; placeholder"
 
-  # Tags on secrets are supported but rarely useful; we tag anyway so
-  # the resource shows up correctly in cost-tracking reports.
   tags = var.tags
 
-  # Ensure the role assignment is in place before we try to write — Azure
-  # propagates RBAC eagerly but there's still a small lag.
+  # Wait for RBAC to propagate before attempting to write secrets.
+  # When grant_terraform_secrets_officer=false (post-bootstrap), secrets
+  # are managed out-of-band and this resource is a no-op via ignore_changes.
   depends_on = [
+    time_sleep.wait_for_rbac,
     azurerm_role_assignment.terraform_secrets_officer,
   ]
 

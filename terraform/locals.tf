@@ -48,13 +48,16 @@ locals {
   # The computed defaults win on collision so that callers can't accidentally
   # drift the `environment` tag.
   # ---------------------------------------------------------------------------
+  # Note: `last_applied` was removed because `timestamp()` changes on
+  # every plan, forcing a diff on ALL tagged resources even when nothing
+  # changed. If deploy tracking is needed, inject it as a variable from
+  # the CI/CD pipeline (e.g. -var="deploy_timestamp=2026-04-10T12:00:00Z").
   common_tags = merge(
     var.tags,
     {
-      environment  = var.environment
-      location     = var.location
-      terraform    = "true"
-      last_applied = formatdate("YYYY-MM-DD", timestamp())
+      environment = var.environment
+      location    = var.location
+      terraform   = "true"
     }
   )
 

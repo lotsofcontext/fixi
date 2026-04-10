@@ -49,22 +49,19 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "anthropic_api_key_secret_id" {
-  description = "Key Vault secret URI for the Anthropic API key."
+variable "key_vault_id" {
+  description = "Full resource ID of the Key Vault that holds Fixi's runtime secrets. Passed directly from the key_vault module output to avoid chicken-and-egg with URI parsing."
   type        = string
-  sensitive   = true
 }
 
-variable "ado_pat_secret_id" {
-  description = "Key Vault secret URI for the Azure DevOps PAT."
+variable "managed_identity_client_id" {
+  description = "Client ID of the user-assigned managed identity. Injected as AZURE_CLIENT_ID so DefaultAzureCredential can use it explicitly."
   type        = string
-  sensitive   = true
 }
 
-variable "github_pat_secret_id" {
-  description = "Key Vault secret URI for the GitHub PAT."
+variable "environment" {
+  description = "Deployment environment name (dev, staging, prod). Used as FIXI_ENV inside the container."
   type        = string
-  sensitive   = true
 }
 
 variable "log_analytics_workspace_id" {

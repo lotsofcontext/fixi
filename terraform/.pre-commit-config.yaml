@@ -1,0 +1,38 @@
+# Pre-commit hooks for Terraform
+#
+# Install:
+#   pip install pre-commit
+#   cd terraform/
+#   pre-commit install
+#
+# Run manually:
+#   pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.2
+    hooks:
+      # Format check — ensures consistent HCL style
+      - id: terraform_fmt
+
+      # Syntax validation — catches typos and missing variables
+      - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
+
+      # Linting — catches Azure-specific mistakes (invalid SKUs,
+      # deprecated arguments, naming issues) that validate misses
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+
+      # Security scanning — flags public access, missing encryption,
+      # overly permissive RBAC, etc. Maps to CIS Azure benchmarks.
+      - id: terraform_trivy
+        args:
+          - --args=--severity=HIGH,CRITICAL
+
+      # Auto-generate module docs from variables/outputs
+      - id: terraform_docs
+        args:
+          - --args=--config=.terraform-docs.yml
